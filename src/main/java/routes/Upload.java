@@ -22,6 +22,11 @@ public class Upload {
         System.out.println("name: "+ name);
         Iterator<MultipartFile> filesIterator = files.iterator();
 
+        if(files.size() == 0) {
+            String errorJSON = "{\"success\": false, \"message\": \"Please choose File(s) for uploading!\"}";
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorJSON);
+        }
+
         while(filesIterator.hasNext()) {
             try {
                 byte[] x = filesIterator.next().getBytes();
@@ -29,11 +34,12 @@ public class Upload {
                 System.out.println(s);
             }
             catch(Exception e) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{}");
+                String errorJSON = "{\"success\": false, \"message\": \"An Error occured while uploading!\"}";
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorJSON);
             }
         }
 
-
-        return ResponseEntity.status(HttpStatus.OK).body("{}");
+        String successJSON = "{\"success\": true, \"message\": \"File was successfully uploaded!\"}";
+        return ResponseEntity.status(HttpStatus.OK).body(successJSON);
     }
 }
