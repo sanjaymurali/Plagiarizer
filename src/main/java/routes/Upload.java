@@ -8,7 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Iterator;
 import java.util.List;
 
-@CrossOrigin(origins = {"http://localhost:4200", "http://plagiarizer.herokuapp.com"})
+@CrossOrigin(origins = {"http://localhost:4200","http://plagiarizer.herokuapp.com", "https://plagiarizer.herokuapp.com"})
 @RestController
 public class Upload {
 
