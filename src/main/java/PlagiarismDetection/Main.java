@@ -1,17 +1,14 @@
 package PlagiarismDetection;
 
+import PlagiarizerFactory.Factory;
+
 import java.io.IOException;
-import java.util.Iterator;
 
+// dummy to test
 public class Main {
-    public static void main(String... args) throws IOException{
+    public static void main(String... args) throws IOException {
+        Factory factory = new Factory();
 
-
-
-        Assignment a = Assignment.createAssignment();
-        Iterator<Submission> s = a.getSubmissions().iterator();
-        while(s.hasNext())
-            System.out.println(s.next().getStudentName());
 
 
     }

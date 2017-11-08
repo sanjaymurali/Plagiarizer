@@ -8,37 +8,37 @@ public class Assignment {
     private ArrayList<Submission> submissions = new ArrayList<>();
 
     private static Assignment assignmentInstance;
-    private Assignment() {}
 
+    private Assignment() {
+    }
+
+    // singleton
     public static Assignment createAssignment() {
-        if(assignmentInstance == null)
+        if (assignmentInstance == null)
             assignmentInstance = new Assignment();
 
         return assignmentInstance;
     }
 
+    // find submission given student ID
     public Submission findSubmission(int studentID) {
         Iterator<Submission> iterator = this.submissions.iterator();
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             Submission currentSubmission = iterator.next();
-            if(studentID == (currentSubmission.getStudentID())) {
+            if (studentID == (currentSubmission.getStudentID())) {
                 return currentSubmission;
             }
         }
 
-    return null;
+        return null;
     }
 
-
+    // Add Submission of a student
     public void pushSubmissions(Submission submission) {
         this.submissions.add(submission);
     }
 
     public ArrayList<Submission> getSubmissions() {
         return submissions;
-    }
-
-    public void setSubmissions(ArrayList<Submission> submissions) {
-        this.submissions = submissions;
     }
 }

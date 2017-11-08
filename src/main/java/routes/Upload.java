@@ -1,7 +1,11 @@
 package routes;
 
 import PlagiarismDetection.Assignment;
+import PlagiarizerFactory.Factory;
+import IO.*;
 import PlagiarismDetection.Submission;
+import configuration.ApplicationConfig;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,30 +14,35 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Iterator;
 import java.util.List;
 
-@CrossOrigin(origins = {"http://localhost:4200","http://plagiarizer.herokuapp.com", "https://plagiarizer.herokuapp.com"})
+/**
+ * Upload class has the routes for "upload" URL. We use CrossOrigin annotation to make sure that CORS is enabled for the
+ * resources
+ */
 @RestController
+@CrossOrigin(origins = {
+        ApplicationConfig.local,
+        ApplicationConfig.herokuNoHttps,
+        ApplicationConfig.heroku})
 public class Upload {
-    Assignment a = Assignment.createAssignment();
+
+    Factory factory = new Factory();
+    Assignment a = factory.createAssignment();
+    Writer writer = factory.Writer();
+
     int currentStudentID = 0;
 
-    @RequestMapping("/upload")
-    public String hello() {
-        return "Hello World!";
-    }
-
-    @RequestMapping(value = "/upload", method= RequestMethod.POST)
-    public ResponseEntity<?> uploadSumission(@RequestParam("files") List<MultipartFile> files, @RequestParam("name") String name) {
-        Submission submission = new Submission(); // Every Upload is a new submission
+    // Uploading Files
+    @RequestMapping(value = "/upload", method = RequestMethod.POST)
+    public ResponseEntity<?> uploadSubmission(@RequestParam("files") List<MultipartFile> files, @RequestParam("name") String name) {
 
         Iterator<MultipartFile> filesIterator = files.iterator();
 
         // if no files are uploaded, send back an error
-        if(files.size() == 0) {
+        if (files.size() == 0) {
             String errorJSON = "{\"success\": false, \"message\": \"Please choose File(s) for uploading!\"}";
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorJSON);
         } else {
-            submission.setStudentID(currentStudentID++); // the current student id for uploaded files
-
+            Submission submission = factory.createSubmission(currentStudentID++, name); // Every Upload is a new submission
             String[] paths = new String[files.size()]; // absolute paths to the files
             int i = 0;
             // Iterate over the uploaded files
@@ -44,7 +53,7 @@ public class Upload {
                     byte[] x = currentFile.getBytes();
                     String fileName = currentFile.getOriginalFilename();
                     // Absolute path in disk to uploaded file
-                    paths[i] = submission.storeFileOnDisk(fileName, x);
+                    paths[i] = submission.storeSubmission(writer, fileName, x);
                     i++;
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -52,8 +61,9 @@ public class Upload {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorJSON);
                 }
             }
-            // set Submission
-            submission.storeSubmission(name, paths);
+
+            submission.setFilePaths(paths); // this sets all uploaded files to a particular student
+
             // Push the submission into the assignment
             a.pushSubmissions(submission);
 
@@ -62,23 +72,10 @@ public class Upload {
         }
     }
 
+    // to remove all uploads
     @RequestMapping("cleanse")
     public String internalCleanse() {
-        Submission s = new Submission();
-        s.deleteAllUploads();
+        writer.deleteAllUploads();
         return "Done!";
-    }
-
-    @RequestMapping("assignment")
-    public String assignment() {
-        Assignment a = Assignment.createAssignment();
-        Iterator<Submission> s = a.getSubmissions().iterator();
-        String s1 = "";
-        while(s.hasNext()) {
-            Submission cu = s.next();
-            s1 += cu.toString();
-        }
-
-        return s1;
     }
 }
