@@ -44,6 +44,7 @@ public class Upload {
         } else {
             Submission submission = factory.createSubmission(currentStudentID++, name); // Every Upload is a new submission
             String[] paths = new String[files.size()]; // absolute paths to the files
+            String[] fileNames = new String[files.size()];
             int i = 0;
             // Iterate over the uploaded files
             while (filesIterator.hasNext()) {
@@ -52,17 +53,17 @@ public class Upload {
                     // File Content and File name
                     byte[] x = currentFile.getBytes();
                     String fileName = currentFile.getOriginalFilename();
+                    fileNames[i] = fileName;
                     // Absolute path in disk to uploaded file
                     paths[i] = submission.storeSubmission(writer, fileName, x);
                     i++;
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    String errorJSON = "{\"success\": false, \"message\": \"An Error occured while uploading!\"}";
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorJSON);
+                    return ApplicationConfig.ErrorResponse();
                 }
             }
 
             submission.setFilePaths(paths); // this sets all uploaded files to a particular student
+            submission.setFileNames(fileNames);
 
             // Push the submission into the assignment
             a.pushSubmissions(submission);

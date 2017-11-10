@@ -33,6 +33,14 @@ public class Submission {
         this.filePaths = filePaths;
     }
 
+    public String[] getFileNames() {
+        return fileNames;
+    }
+
+    public void setFileNames(String[] fileNames) {
+        this.fileNames = fileNames;
+    }
+
     public Submission() {}
 
     public Submission(int studentID, String name) {
@@ -43,6 +51,15 @@ public class Submission {
     // store the files on to disk
     public String storeSubmission(Writer writer, String fileName, byte[] fileContent) throws IOException {
         return writer.storeFileOnDisk(this.studentID, fileName, fileContent);
+    }
+
+    public String getAbsolutePath(String fileName) {
+        for (int i = 0; i < this.fileNames.length; i++) {
+            if(this.fileNames[i].equals(fileName)) {
+                return this.filePaths[i];
+            }
+        }
+        return null;
     }
 
     // to print the submission
@@ -56,14 +73,18 @@ public class Submission {
             returns += this.filePaths[i] + ", ";
         }
 
+        for (int i = 0; i < this.fileNames.length; i++) {
+            returns += this.fileNames[i] + ", ";
+        }
+
         returns += "} ";
         return returns;
 
     }
 
-
     private int studentID = 0;
     private String studentName;
     private String[] filePaths;
+    private String[] fileNames;
 
 }

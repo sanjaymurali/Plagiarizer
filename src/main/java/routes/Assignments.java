@@ -1,16 +1,15 @@
 package routes;
 
-import PlagiarizerFactory.Factory;
 import PlagiarismDetection.Assignment;
-import PlagiarismDetection.Submission;
+import PlagiarizerFactory.Factory;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import configuration.ApplicationConfig;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Iterator;
 
 
 /**
@@ -25,33 +24,35 @@ public class Assignments {
     Factory factory = new Factory();
     Assignment a = factory.createAssignment();
 
+    ObjectMapper om = new ObjectMapper();
+
     // to show all submissions
     @RequestMapping("assignment")
-    public String assignments() {
-        Iterator<Submission> s = a.getSubmissions().iterator();
-        String s1 = "";
-        while (s.hasNext()) {
-            Submission cu = s.next();
-            s1 += cu.toString();
+    public ResponseEntity<?> assignments() throws JsonProcessingException{
+        String s = "";
+        try {
+            s = om.writeValueAsString(a.getSubmissions());
+        }
+        catch(Exception e) {
+            return ApplicationConfig.ErrorResponse();
         }
 
-        return s1;
+        return ResponseEntity.ok(s);
     }
 
     // to show a particular student's submission
     @RequestMapping("assignment/{id}")
     public ResponseEntity<?> findSubmission(@PathVariable("id") String id) {
-        int studentID = Integer.parseInt(id);
-
-        Submission foundSubmission = a.findSubmission(studentID);
-
-        if (foundSubmission == null) {
-            String notFound = "{\"success\": false, \"message\": \"Submission not found\"}";
-            return ResponseEntity.status(404).body(notFound);
+        String foundSubmission = "";
+        try {
+            int studentID = Integer.parseInt(id);
+            foundSubmission = om.writeValueAsString(a.findSubmission(studentID));
+        }
+        catch(Exception e) {
+            return ApplicationConfig.ErrorResponse();
         }
 
-        String submissionAsString = foundSubmission.toString();
-        return ResponseEntity.ok(submissionAsString);
+        return ResponseEntity.ok(foundSubmission);
     }
 
 

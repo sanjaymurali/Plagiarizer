@@ -22,4 +22,5 @@ public class Factory extends AbstractFactory {
         return new Writer();
     }
 
+    public Reader Reader() { return new Reader(); }
 }

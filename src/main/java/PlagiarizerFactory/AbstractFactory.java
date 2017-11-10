@@ -17,4 +17,6 @@ public abstract class AbstractFactory {
     public abstract Submission createSubmission();
 
     public abstract Writer Writer();
+
+    public abstract Reader Reader();
 }
