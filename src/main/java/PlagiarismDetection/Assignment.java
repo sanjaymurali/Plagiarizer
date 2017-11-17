@@ -41,4 +41,8 @@ public class Assignment {
     public ArrayList<Submission> getSubmissions() {
         return submissions;
     }
+
+    public void deleteSubmissions() {
+        this.submissions.clear();
+    }
 }

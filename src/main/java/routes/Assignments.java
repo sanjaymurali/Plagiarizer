@@ -1,5 +1,6 @@
 package routes;
 
+import IO.Writer;
 import PlagiarismDetection.Assignment;
 import PlagiarizerFactory.Factory;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class Assignments {
     Factory factory = new Factory();
     Assignment a = factory.createAssignment();
+    Writer writer = factory.Writer();
 
     ObjectMapper om = new ObjectMapper();
 
@@ -55,5 +57,13 @@ public class Assignments {
         return ResponseEntity.ok(foundSubmission);
     }
 
+
+    // to remove all uploads
+    @RequestMapping("cleanse")
+    public String internalCleanse() {
+        a.deleteSubmissions();
+        writer.deleteAllUploads();
+        return "Done!";
+    }
 
 }

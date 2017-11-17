@@ -72,11 +72,4 @@ public class Upload {
             return ResponseEntity.status(HttpStatus.OK).body(successJSON);
         }
     }
-
-    // to remove all uploads
-    @RequestMapping("cleanse")
-    public String internalCleanse() {
-        writer.deleteAllUploads();
-        return "Done!";
-    }
 }
