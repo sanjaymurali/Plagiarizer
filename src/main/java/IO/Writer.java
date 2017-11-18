@@ -34,16 +34,18 @@ public class Writer {
     public void deleteAllUploads() {
         File currentDir = new File(pathToUploadFolder);
         File[] files = currentDir.listFiles();
-
-        for (File file : files) {
-            if (file.isDirectory()) {
-                File[] insidefiles = file.listFiles();
-                for (File insidefile : insidefiles) {
-                    insidefile.delete();
+        if(files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    File[] insidefiles = file.listFiles();
+                    for (File insidefile : insidefiles) {
+                        insidefile.delete();
+                    }
                 }
+                file.delete();
             }
-            file.delete();
         }
+
     }
 
 
