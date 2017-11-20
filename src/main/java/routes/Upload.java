@@ -1,10 +1,10 @@
 package routes;
 
-import PlagiarismDetection.Assignment;
-import PlagiarizerFactory.Factory;
-import IO.*;
-import PlagiarismDetection.Submission;
-import configuration.ApplicationConfig;
+import core.PlagiarismDetection.Assignment;
+import core.PlagiarizerFactory.Factory;
+import core.IO.*;
+import core.PlagiarismDetection.Submission;
+import core.configuration.ApplicationConfig;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

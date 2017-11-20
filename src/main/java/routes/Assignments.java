@@ -1,11 +1,11 @@
 package routes;
 
-import IO.Writer;
-import PlagiarismDetection.Assignment;
-import PlagiarizerFactory.Factory;
+import core.IO.Writer;
+import core.PlagiarismDetection.Assignment;
+import core.PlagiarizerFactory.Factory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import configuration.ApplicationConfig;
+import core.configuration.ApplicationConfig;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,13 +25,13 @@ public class Assignments {
     Factory factory = new Factory();
     Assignment a = factory.createAssignment();
     Writer writer = factory.Writer();
-
     ObjectMapper om = new ObjectMapper();
 
     // to show all submissions
     @RequestMapping("assignment")
     public ResponseEntity<?> assignments() throws JsonProcessingException{
         String s = "";
+
         try {
             s = om.writeValueAsString(a.getSubmissions());
         }
@@ -49,6 +49,8 @@ public class Assignments {
         try {
             int studentID = Integer.parseInt(id);
             foundSubmission = om.writeValueAsString(a.findSubmission(studentID));
+            if(foundSubmission.equals("null"))
+                return ApplicationConfig.ErrorResponse();
         }
         catch(Exception e) {
             return ApplicationConfig.ErrorResponse();

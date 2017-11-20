@@ -1,11 +1,11 @@
 package routes;
 
-import IO.Reader;
-import PlagiarismDetection.Assignment;
-import PlagiarismDetection.Submission;
-import PlagiarizerFactory.Factory;
+import core.IO.Reader;
+import core.PlagiarismDetection.Assignment;
+import core.PlagiarismDetection.Submission;
+import core.PlagiarizerFactory.Factory;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import configuration.ApplicationConfig;
+import core.configuration.ApplicationConfig;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
