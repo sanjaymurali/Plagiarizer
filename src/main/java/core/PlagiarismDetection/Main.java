@@ -14,7 +14,7 @@ public class Main {
 
         ObjectMapper om = new ObjectMapper();
 
-        String s = om.writeValueAsString(null);
+        String s = om.writeValueAsString("{");
         System.out.println(s);
 
 

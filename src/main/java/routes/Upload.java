@@ -25,28 +25,39 @@ import java.util.List;
         ApplicationConfig.heroku})
 public class Upload {
 
+    /*
+        Each Upload (set of files) is considered as student submission, hence each upload is assigned an unique ID
+     */
+
     Factory factory = new Factory();
     Assignment a = factory.createAssignment();
     Writer writer = factory.Writer();
 
-    int currentStudentID = 0;
+    int currentStudentID = 0; // This is to generate unique ID for each student
 
-    // Uploading Files
+    /**
+     *
+     * @param files is the files (Java Programs)
+     * @param name is the name of the student
+     * @return error if there was an error writing files on to the disk, else return status of 200 with a message
+     */
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
     public ResponseEntity<?> uploadSubmission(@RequestParam("files") List<MultipartFile> files, @RequestParam("name") String name) {
-
         Iterator<MultipartFile> filesIterator = files.iterator();
-
         // if no files are uploaded, send back an error
         if (files.size() == 0) {
             String errorJSON = "{\"success\": false, \"message\": \"Please choose File(s) for uploading!\"}";
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorJSON);
-        } else {
+        } else if(name.isEmpty()) {
+            String errorJSON = "{\"success\": false, \"message\": \"No Student name provided!\"}";
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorJSON);
+        } else{
             Submission submission = factory.createSubmission(currentStudentID++, name); // Every Upload is a new submission
             String[] paths = new String[files.size()]; // absolute paths to the files
-            String[] fileNames = new String[files.size()];
+            String[] fileNames = new String[files.size()]; // file names
             int i = 0;
             // Iterate over the uploaded files
+
             while (filesIterator.hasNext()) {
                 try {
                     MultipartFile currentFile = filesIterator.next();
@@ -62,9 +73,10 @@ public class Upload {
                 }
             }
 
-            submission.setFilePaths(paths); // this sets all uploaded files to a particular student
-            submission.setFileNames(fileNames);
 
+            submission.setFilePaths(paths); // this sets absolute path of all uploaded files to a particular student
+            submission.setFileNames(fileNames); // this sets files names of all uploaded files to a particular student
+            System.out.println(submission.toString());
             // Push the submission into the assignment
             a.pushSubmissions(submission);
 

@@ -1,10 +1,9 @@
 package routes;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import core.IO.Writer;
 import core.PlagiarismDetection.Assignment;
 import core.PlagiarizerFactory.Factory;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import core.configuration.ApplicationConfig;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -25,11 +24,19 @@ public class Assignments {
     Factory factory = new Factory();
     Assignment a = factory.createAssignment();
     Writer writer = factory.Writer();
-    ObjectMapper om = new ObjectMapper();
+    ObjectMapper om = new ObjectMapper(); // ObjectMapper is used to write a value as String
 
-    // to show all submissions
+    /*
+        ObjectMapper Works as follows: Lets assume the class A, with members "int age" and "String name", it would
+        convert it into String as follows: {'age': <Your-age>, 'name': '<Your-name'>}
+     */
+
+    /**
+     * This is the url : "/assignment"
+     * @return error if there was error processing request else return all the submissions
+     */
     @RequestMapping("assignment")
-    public ResponseEntity<?> assignments() throws JsonProcessingException{
+    public ResponseEntity<?> assignments(){
         String s = "";
 
         try {
@@ -42,7 +49,11 @@ public class Assignments {
         return ResponseEntity.ok(s);
     }
 
-    // to show a particular student's submission
+    /**
+     * This is the url : "/assignment/<id>"
+     * @param id is the StudentID whose Submission we need to retrieve
+     * @return Submission as String.
+     */
     @RequestMapping("assignment/{id}")
     public ResponseEntity<?> findSubmission(@PathVariable("id") String id) {
         String foundSubmission = "";
@@ -60,7 +71,10 @@ public class Assignments {
     }
 
 
-    // to remove all uploads
+    /**
+     * This is for internal use only and its no where used in the frontend. To remove all uploads
+     * @return a String to show completion of operation
+     */
     @RequestMapping("cleanse")
     public String internalCleanse() {
         a.deleteSubmissions();

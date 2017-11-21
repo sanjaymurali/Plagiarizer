@@ -50,6 +50,7 @@ public class Submission {
      * @throws IOException when there is an error in writing the file
      */
     public String storeSubmission(Writer writer, String fileName, byte[] fileContent) throws IOException {
+        System.out.println("Inside!");
         return writer.storeFileOnDisk(this.studentID, fileName, fileContent);
     }
 

@@ -1,5 +1,7 @@
 package PlagiarismDetector;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import core.PlagiarismDetection.Assignment;
 import core.PlagiarismDetection.Submission;
 import core.PlagiarizerFactory.Factory;
@@ -9,20 +11,21 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.Spy;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 import routes.Assignments;
 
 import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -34,11 +37,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class AssignmentRouteTests {
 
+    @InjectMocks
+    Assignments assignments;
+
     @Mock
     Factory factory;
 
-    @Autowired
-    WebApplicationContext wac;
+    @Spy
+    ObjectMapper om;
 
     private MockMvc mockMvc;
 
@@ -50,8 +56,8 @@ public class AssignmentRouteTests {
 
     @Before
     public void setup() {
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
         MockitoAnnotations.initMocks(this);
+        mockMvc = MockMvcBuilders.standaloneSetup(assignments).build();
     }
 
     @BeforeClass
@@ -202,6 +208,15 @@ public class AssignmentRouteTests {
     }
 
 
+    @Test
+    public void test10() throws Exception {
+        when( om.writeValueAsString(any())).thenThrow( new JsonProcessingException("") {});
 
+        String responseJSON = "{\"success\": false, \"message\": \"An Error occured!\"}";
+        mockMvc.perform(get("/assignment"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(responseJSON));
+
+    }
 
 }

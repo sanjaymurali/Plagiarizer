@@ -52,4 +52,7 @@ public class Reader {
         else
             return false;
     }
+
+    // Test only methods
+
 }

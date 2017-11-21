@@ -16,7 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
         ApplicationConfig.heroku})
 public class Entry {
 
-    // Entry to backend of the app
+    /**
+     * This is the BASE_URL of the back-end.
+     * @return a String which tells the user where the front-end of the application is
+     */
     @RequestMapping("/")
     public String Entry() {
         return "Hey! Thanks for visiting, Please visit: http://plagiarizer.herokuapp.com/";
