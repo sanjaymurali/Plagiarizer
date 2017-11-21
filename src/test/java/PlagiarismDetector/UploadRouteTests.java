@@ -18,6 +18,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import routes.Upload;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -50,8 +53,8 @@ public class UploadRouteTests {
     @Test
     public void test1InitialAssignment() throws Exception {
 
-        //when(submission.storeSubmission(any(), eq("1.java"), any())).thenReturn("1.java");
-        //when(submission.storeSubmission(any(), eq("2.java"), any())).thenReturn("2.java");
+        when(submission.storeSubmission(any(), eq("1.java"), any())).thenReturn("1.java");
+        when(submission.storeSubmission(any(), eq("2.java"), any())).thenReturn("2.java");
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.multipart("/upload")
                                                                 .file(firstFile)

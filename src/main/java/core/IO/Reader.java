@@ -34,7 +34,6 @@ public class Reader {
                 inputStream.close();
             }
         }
-
         return null;
     }
 
