@@ -1,0 +1,9 @@
+1. 100% test coverage isnt achieved for all the classes.
+
+2. Writer class test coverage would be 100% only if you delete the "uploads" folder under src/main/resources
+
+3. The comparison hasnt been implemented only the algorithm is done
+
+4. the Upload route doesnt have 100% test coverage when there is an exception
+
+5. The known issues for algorithms/LCS is given as TODO comments

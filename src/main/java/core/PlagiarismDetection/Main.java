@@ -11,12 +11,10 @@ public class Main {
         Factory factory = new Factory();
 
 
-
         ObjectMapper om = new ObjectMapper();
 
         String s = om.writeValueAsString("{");
         System.out.println(s);
-
 
 
     }

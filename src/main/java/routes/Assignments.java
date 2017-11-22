@@ -33,16 +33,16 @@ public class Assignments {
 
     /**
      * This is the url : "/assignment"
+     *
      * @return error if there was error processing request else return all the submissions
      */
     @RequestMapping("assignment")
-    public ResponseEntity<?> assignments(){
+    public ResponseEntity<?> assignments() {
         String s = "";
 
         try {
             s = om.writeValueAsString(a.getSubmissions());
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             return ApplicationConfig.ErrorResponse();
         }
 
@@ -51,6 +51,7 @@ public class Assignments {
 
     /**
      * This is the url : "/assignment/<id>"
+     *
      * @param id is the StudentID whose Submission we need to retrieve
      * @return Submission as String.
      */
@@ -60,10 +61,9 @@ public class Assignments {
         try {
             int studentID = Integer.parseInt(id);
             foundSubmission = om.writeValueAsString(a.findSubmission(studentID));
-            if(foundSubmission.equals("null"))
+            if (foundSubmission.equals("null"))
                 return ApplicationConfig.ErrorResponse();
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             return ApplicationConfig.ErrorResponse();
         }
 
@@ -73,6 +73,7 @@ public class Assignments {
 
     /**
      * This is for internal use only and its no where used in the frontend. To remove all uploads
+     *
      * @return a String to show completion of operation
      */
     @RequestMapping("cleanse")

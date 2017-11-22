@@ -18,6 +18,7 @@ public class Entry {
 
     /**
      * This is the BASE_URL of the back-end.
+     *
      * @return a String which tells the user where the front-end of the application is
      */
     @RequestMapping("/")

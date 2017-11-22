@@ -15,12 +15,12 @@ public class Submission {
     private String[] fileNames;
 
     // Default Constructor
-    public Submission() {}
+    public Submission() {
+    }
 
     /**
-     *
      * @param studentID is the unique ID given to each student
-     * @param name is the name of the student
+     * @param name      is the name of the student
      */
     public Submission(int studentID, String name) {
         this.studentID = studentID;
@@ -28,9 +28,8 @@ public class Submission {
     }
 
     /**
-     *
      * @param studentID is the unique ID given to each student
-     * @param name is the name of the student
+     * @param name      is the name of the student
      * @param filePaths is the absolute paths to each file uploaded by the student
      * @param fileNames is the file names of each file uploaded by the students
      */
@@ -42,9 +41,8 @@ public class Submission {
     }
 
     /**
-     *
-     * @param writer is the Writer which provides method to write the contents of the file onto disk
-     * @param fileName is the name of the file
+     * @param writer      is the Writer which provides method to write the contents of the file onto disk
+     * @param fileName    is the name of the file
      * @param fileContent is the content of the file as byte array
      * @return a String which is the absolute path to the file on the disk
      * @throws IOException when there is an error in writing the file
@@ -55,13 +53,12 @@ public class Submission {
     }
 
     /**
-     *
      * @param fileName is the file name whose absolute path we need
      * @return the absolute path to the file
      */
     public String getAbsolutePath(String fileName) {
         for (int i = 0; i < this.fileNames.length; i++) {
-            if(this.fileNames[i].equals(fileName)) {
+            if (this.fileNames[i].equals(fileName)) {
                 return this.filePaths[i];
             }
         }
@@ -69,7 +66,6 @@ public class Submission {
     }
 
     /**
-     *
      * @return the Student ID
      */
     public int getStudentID() {
@@ -77,7 +73,6 @@ public class Submission {
     }
 
     /**
-     *
      * @param studentID is the ID of the student
      */
     public void setStudentID(int studentID) {
@@ -85,7 +80,6 @@ public class Submission {
     }
 
     /**
-     *
      * @return the name of the student
      */
     public String getStudentName() {
@@ -93,7 +87,6 @@ public class Submission {
     }
 
     /**
-     *
      * @param studentName is the name of the student
      */
     public void setStudentName(String studentName) {
@@ -101,7 +94,6 @@ public class Submission {
     }
 
     /**
-     *
      * @return the absolute paths to each file uploaded by the student
      */
     public String[] getFilePaths() {
@@ -109,7 +101,6 @@ public class Submission {
     }
 
     /**
-     *
      * @param filePaths is the absolute paths to each file uploaded by the student
      */
     public void setFilePaths(String[] filePaths) {
@@ -117,7 +108,6 @@ public class Submission {
     }
 
     /**
-     *
      * @return the file names of each file uploaded by the students
      */
     public String[] getFileNames() {
@@ -125,7 +115,6 @@ public class Submission {
     }
 
     /**
-     *
      * @param fileNames is the file names of each file uploaded by the students
      */
     public void setFileNames(String[] fileNames) {
@@ -134,6 +123,7 @@ public class Submission {
 
     /**
      * to print the submission
+     *
      * @return the String version of the Submission Object
      */
     @Override

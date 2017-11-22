@@ -25,7 +25,7 @@ public class EntryRouteTests {
     private MockMvc mockMvc;
 
     @Before
-    public void setup() throws Exception{
+    public void setup() throws Exception {
         this.mockMvc = MockMvcBuilders.standaloneSetup(entry).build();
         MockitoAnnotations.initMocks(this);
     }

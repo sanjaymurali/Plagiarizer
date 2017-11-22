@@ -1,9 +1,7 @@
 package PlagiarismDetector;
 
 import core.PlagiarismDetection.Submission;
-import org.junit.Before;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.mockito.InjectMocks;
@@ -16,11 +14,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import routes.Assignments;
 import routes.Upload;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -31,6 +31,10 @@ public class UploadRouteTests {
 
     @InjectMocks
     Upload upload;
+
+    // for cleanup
+    @InjectMocks
+    static Assignments assignments;
 
     @Mock
     Submission submission;
@@ -48,6 +52,12 @@ public class UploadRouteTests {
         secondFile = new MockMultipartFile("files", "2.java", "text/plain", "2nd Program here!".getBytes());
     }
 
+    @AfterClass
+    public static void cleanup() throws Exception {
+        MockMvc mockMvcInner = MockMvcBuilders.standaloneSetup(assignments).build();
+        mockMvcInner.perform(get("cleanse"));
+    }
+
 
     // Test two files being uploaded with a student name
     @Test
@@ -57,9 +67,9 @@ public class UploadRouteTests {
         when(submission.storeSubmission(any(), eq("2.java"), any())).thenReturn("2.java");
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.multipart("/upload")
-                                                                .file(firstFile)
-                                                                .file(secondFile)
-                                                                .param("name", "sanjay");
+                .file(firstFile)
+                .file(secondFile)
+                .param("name", "sanjay");
 
         String responseJSON = "{\"success\": true, \"message\": \"File was successfully uploaded!\"}";
 

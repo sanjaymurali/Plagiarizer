@@ -17,6 +17,7 @@ public class ApplicationConfig {
 
     /**
      * This method is used when an error has occured in a route
+     *
      * @return a ResponseEntity which sets a status of 400 (Bad Request) and sends an JSON with error message
      */
     public static final ResponseEntity<?> ErrorResponse() {

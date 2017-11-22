@@ -24,8 +24,7 @@ public class Submissions {
     ObjectMapper om = new ObjectMapper();
 
     /**
-     *
-     * @param id is the unique ID given to each Student
+     * @param id   is the unique ID given to each Student
      * @param name is the name of the file
      * @return error if there is no file with the given name, else return the contents of the file
      */

@@ -3,15 +3,20 @@ package core.algorithm.lcs;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.IOException;
+
+import static junit.framework.TestCase.fail;
+
 /**
- * Created by carolinemead on 11/12/17.
+ * Test C
  */
 public class testsForNormalizer {
 
+    String pathToFolder = "src/main/resources/tests/";
+
     @Test
-    public void test() throws Exception {
-        // Sample file
-        String filePath = "src/test/java/core/algorithm/lcs/Rectangle.java";
+    public void test() throws IOException {
+        String filePath = pathToFolder + "Rectangle.java";
         Normalizer s = new Normalizer(filePath);
         s.runNormalization();
         String expected = "class Rectangle {\n" +
@@ -39,9 +44,37 @@ public class testsForNormalizer {
         Assert.assertEquals(s.getNormalized(), expected);
     }
 
-    /*
     @Test
-    public void testComments() throws Exception {
+    public void badFile() {
+        String filePath = "test/NotRealPath.java";
+        Normalizer s;
+        try {
+            s = new Normalizer(filePath);
+            fail();
+        } catch (IOException e) {
+            return;
+        }
+
+    }
+
+//    @Test
+//    public void testNoConstructorOrVariables() throws IOException {
+//        String filePath = pathToFolder+"noConstructorOrVariablesRectangle.java";
+//        Normalizer s = new Normalizer(filePath);
+//        s.runNormalization();
+//        String expected = "public class noConstructorOrVariablesRectangle {\n" +
+//                "\n" +
+//                "public int method(){\n" +
+//                "return 10 * 100;\n" +
+//                "}\n" +
+//                "}";
+//        Assert.assertEquals(s.getNormalized(), expected);
+//
+//    }
+    // DEPRECATED TESTS FROM WHEN HELPER METHODS WERE PUBLIC //TODO look into mockito for testing this.
+/*
+    @Test
+    public void testComments() throws IOException {
         String result = null;
         String test = "//remove\n" +
                 "don't remove //but remove this\n" +
@@ -54,7 +87,6 @@ public class testsForNormalizer {
         String expected = "don't remove\ndon't remove\n";
         Assert.assertEquals(s.getNormalized(), expected);
     }
-
     @Test
     public void testLines() throws FileNotFoundException {
         String result = null;

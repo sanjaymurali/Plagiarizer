@@ -40,6 +40,8 @@ public class AssignmentRouteTests {
     @InjectMocks
     Assignments assignments;
 
+    static Assignments cleanseAssignments = new Assignments();
+
     @Mock
     Factory factory;
 
@@ -61,7 +63,10 @@ public class AssignmentRouteTests {
     }
 
     @BeforeClass
-    public static void setupSubmission() {
+    public static void setupSubmission() throws Exception {
+        Factory factory = new Factory();
+        Assignment assignment = factory.createAssignment();
+        assignment.resetAssignment();
         String[] notRealFiles = {"1.java", "2.java"};
 
         al.add(new Submission(1, "Sanjay", notRealFiles, notRealFiles));
@@ -112,7 +117,7 @@ public class AssignmentRouteTests {
     }
 
     @Test
-    public void test4AllSubmissions() throws Exception{
+    public void test4AllSubmissions() throws Exception {
         a.setSubmissions(al);
 
         when(factory.createAssignment()).thenReturn(a);
@@ -150,7 +155,7 @@ public class AssignmentRouteTests {
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string(responseJSON));
 
-        mockMvc.perform(get("/assignment/{id}",  100))
+        mockMvc.perform(get("/assignment/{id}", 100))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string(responseJSON));
     }
@@ -210,7 +215,8 @@ public class AssignmentRouteTests {
 
     @Test
     public void test10() throws Exception {
-        when( om.writeValueAsString(any())).thenThrow( new JsonProcessingException("") {});
+        when(om.writeValueAsString(any())).thenThrow(new JsonProcessingException("") {
+        });
 
         String responseJSON = "{\"success\": false, \"message\": \"An Error occured!\"}";
         mockMvc.perform(get("/assignment"))

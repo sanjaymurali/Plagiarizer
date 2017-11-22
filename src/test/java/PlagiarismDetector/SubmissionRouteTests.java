@@ -4,10 +4,7 @@ import core.IO.Reader;
 import core.PlagiarismDetection.Assignment;
 import core.PlagiarismDetection.Submission;
 import core.PlagiarizerFactory.Factory;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.mockito.InjectMocks;
@@ -18,6 +15,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import routes.Assignments;
 import routes.Submissions;
 
 import java.util.ArrayList;
@@ -36,6 +34,10 @@ public class SubmissionRouteTests {
     @InjectMocks
     Submissions submissions;
 
+    // for cleanup
+    @InjectMocks
+    static Assignments assignments;
+
     @Mock
     Factory factory;
 
@@ -51,7 +53,7 @@ public class SubmissionRouteTests {
     static ArrayList<Submission> al = new ArrayList<>();
 
     @Before
-    public void setup() throws Exception{
+    public void setup() throws Exception {
         this.mockMvc = MockMvcBuilders.standaloneSetup(submissions).build();
         MockitoAnnotations.initMocks(this);
     }
@@ -61,6 +63,12 @@ public class SubmissionRouteTests {
         String[] notRealFiles = {"1.java", "2.java"};
 
         al.add(new Submission(1, "Sanjay", notRealFiles, notRealFiles));
+    }
+
+    @AfterClass
+    public static void cleanup() throws Exception {
+        MockMvc mockMvcInner = MockMvcBuilders.standaloneSetup(assignments).build();
+        mockMvcInner.perform(get("cleanse"));
     }
 
     // Initially the Submissions for an assignment is empty.

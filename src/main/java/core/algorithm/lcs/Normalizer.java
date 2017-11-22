@@ -2,6 +2,7 @@ package core.algorithm.lcs;
 
 import core.IO.Reader;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -17,11 +18,15 @@ public class Normalizer {
      * Constructs a normalizer by parsing a file into a string.
      *
      * @param filePath path to the file to normalize
-     * @throws Exception if file cannot be found or read
+     * @throws FileNotFoundException if file cannot be found or read
      */
-    public Normalizer(String filePath) throws Exception {
+    public Normalizer(String filePath) throws IOException {
         Reader r = new Reader();
-        this.normalized = r.getFile(filePath); //TODO - HANDLE EXCEPTION
+        if (r.getFile(filePath) == null) {
+            throw new IOException("Cannot find file");
+        } else {
+            this.normalized = r.getFile(filePath);
+        }
         /*File file = new File(filePath);
         Scanner scanner = new Scanner(file);
         StringBuilder string = new StringBuilder((int) file.length());
@@ -49,6 +54,7 @@ public class Normalizer {
     public void runNormalization() {
         this.removeComments();
         this.removeExtraSpacesAndLines();
+        this.removePackagesAndImports();
         this.organize();
         this.replaceVariables();
         this.replaceMethods();
@@ -62,32 +68,52 @@ public class Normalizer {
      * 4. Other Methods
      */
     private void organize() {
+        String organized = "";
+
         /* Find and remove CONSTRUCTOR */ //TODO - why only works before header and variable declarations?
         String constructor = this.findConstructor();
-        this.normalized = this.normalized.replace(constructor, "");
+        if (constructor == null) {
+            constructor = "";
+        } else {
+            this.normalized = this.normalized.replace(constructor, "");
+        }
 
        /* Find and remove HEADER */
         String header = this.findHeader();
-        this.normalized = this.normalized.replace(header, "");
+        if (header == null) {
+            header = "";
+        } else {
+            this.normalized = this.normalized.replace(header, "");
+        }
 
         /* Find and remove VARIABLE DECLARATIONS */
         ArrayList variableDeclarations = this.findVariableDeclarations();
-        String variableList = "\n";
-        for (int i = 0; i < variableDeclarations.size(); ++i) {
-            String dec = (String) variableDeclarations.get(i);
-            variableList = variableList.concat(dec).concat("\n");
+        String variableList = null;
+        if (variableDeclarations.isEmpty()) {
+            variableList = "";
+        } else {
+            variableList = "\n";
+            for (int i = 0; i < variableDeclarations.size(); ++i) {
+                String dec = (String) variableDeclarations.get(i);
+                variableList = variableList.concat(dec).concat("\n");
+            }
+            this.normalized = this.normalized.replace(variableList, "").trim();
         }
-        this.normalized = this.normalized.replace(variableList, "").trim();
 
         /* Reorganize string representation of file in standard order */
 
-        String organized = "";
-        organized = organized.concat(header).concat(variableList)
-                .concat(constructor).concat("\n" + this.getNormalized()); //TODO fix weirdness with spacing
+        organized = organized.concat(header);
+        organized = organized.concat(variableList);
+        organized = organized.concat(constructor);
+        organized = organized.concat("\n" + this.getNormalized()); //TODO fix weirdness with spacing
 
         // System.out.print("AFTER REMOVAL:\n" + this.normalized); //DEBUG
         this.normalized = organized;
         // System.out.print("\n\nAFTER RE-ORGANIZATION:" + this.normalized); //DEBUG
+    }
+
+    private void removePackagesAndImports() {
+        this.normalized = this.normalized.replaceAll("(import|package).+?;", "").trim();
     }
 
     /**
@@ -264,5 +290,7 @@ public class Normalizer {
             this.normalized = this.normalized.replaceAll(methodName, replacementVariableName);
 
         }
+
     }
+
 }

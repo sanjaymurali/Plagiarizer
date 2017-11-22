@@ -19,10 +19,10 @@ public class Assignment {
      * The Default constructor is made private to make sure it isnt directly called to create an
      * instance of the Assignment class
      */
-    private Assignment() {}
+    private Assignment() {
+    }
 
     /**
-     *
      * @return a new instance of Assignment, iff Assignment is null else returns the current instance
      */
     public static Assignment createAssignment() {
@@ -32,7 +32,6 @@ public class Assignment {
     }
 
     /**
-     *
      * @param studentID which is the unique ID given to each student while uploading
      * @return a Submission of the given studentID
      */
@@ -49,7 +48,6 @@ public class Assignment {
     }
 
     /**
-     *
      * @return ArrayList containing all the Submissions
      */
     public ArrayList<Submission> getSubmissions() {
@@ -57,7 +55,6 @@ public class Assignment {
     }
 
     /**
-     *
      * @param submissions is an ArrayList containing Submission as item
      */
     public void setSubmissions(ArrayList<Submission> submissions) {
@@ -74,9 +71,19 @@ public class Assignment {
 
     /**
      * This method is used to add a Submission to the submissions ArrayList
+     *
      * @param submission is the Submission which must be added to the submissions ArrayList
      */
     public void pushSubmissions(Submission submission) {
         this.submissions.add(submission);
+    }
+
+    // Test only method
+
+    /**
+     * Used to reset the assignments
+     */
+    public void resetAssignment() {
+        assignmentInstance = null;
     }
 }

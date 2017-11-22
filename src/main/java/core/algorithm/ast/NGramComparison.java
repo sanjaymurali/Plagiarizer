@@ -4,10 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NGramComparison {
-    private static final int N =3;
+    private static final int N = 3;
     private double result;
 
-
+    /**
+     * comapre two AST and save the result
+     *
+     * @param t1 the first AST to be compared
+     * @param t2 the second AST to be compared
+     */
     public void nGramComparison(AstTree t1, AstTree t2) {
         List<String> target1;
         List<String> target2;
@@ -15,23 +20,40 @@ public class NGramComparison {
 
         target1 = new ArrayList<String>();
         target2 = new ArrayList<String>();
-        for (int i = 0; i < t1.classes.size();i++) {
-            target1.addAll(transfer(t1.classes.get(i)));
+        if (t1.classes != null)
+            for (int i = 0; i < t1.classes.size(); i++) {
+                target1.addAll(transfer(t1.classes.get(i)));
+            }
+
+        if (t2.classes != null)
+            for (int i = 0; i < t2.classes.size(); i++) {
+                target2.addAll(transfer(t2.classes.get(i)));
+            }
+        if (t1.currentPackage != null)
+            target1.addAll(transfer(t1.currentPackage));
+        if (t2.currentPackage != null)
+            target2.addAll(transfer(t2.currentPackage));
+
+        if (t1.imports != null)
+            target1.addAll(transfer(t1.imports));
+        if (t2.imports != null)
+            target1.addAll(transfer(t2.imports));
+
+        if (target1.isEmpty() && target2.isEmpty()) {
+            result = 1.0;
+        } else if (target1.isEmpty() || target2.isEmpty()) {
+            result = 0.0;
+        } else {
+            result = calculateResult(target1, target2);
         }
-        for (int i = 0; i < t2.classes.size();i++) {
-            target2.addAll(transfer(t2.classes.get(i)));
-        }
-        target1.addAll(transfer(t1.currentPackage));
-        target2.addAll(transfer(t2.currentPackage));
-
-
-        target1.addAll(transfer(t1.imports));
-        target1.addAll(transfer(t2.imports));
-
-
-        result = calculateResult(target1,target2);
     }
 
+    /**
+     * comapre two AST list and save the result
+     *
+     * @param t1 the  AST s of first project
+     * @param t2 the AST s  of second project
+     */
     public void nGramComparison(List<AstTree> t1, List<AstTree> t2) {
         List<String> target1;
         List<String> target2;
@@ -39,82 +61,105 @@ public class NGramComparison {
         target2 = new ArrayList<String>();
 
 
-        for(int m=0;m<t1.size();m++){
-            for (int i = 0; i < t1.get(m).classes.size();i++) {
-                target1.addAll(transfer(t1.get(m).classes.get(i)));
-            }
-            target1.addAll(transfer(t1.get(m).currentPackage));
-            target1.addAll(transfer(t1.get(m).imports));
+        for (int m = 0; m < t1.size(); m++) {
+            if (t1.get(m).classes != null)
+                for (int i = 0; i < t1.get(m).classes.size(); i++) {
+
+                    target1.addAll(transfer(t1.get(m).classes.get(i)));
+                }
+            if (t1.get(m).currentPackage != null)
+                target1.addAll(transfer(t1.get(m).currentPackage));
+            if (t1.get(m).imports != null)
+                target1.addAll(transfer(t1.get(m).imports));
         }
 
 
-        for(int m=0;m<t1.size();m++) {
-            for (int i = 0; i < t2.get(m).classes.size(); i++) {
-                target2.addAll(transfer(t2.get(m).classes.get(i)));
-            }
+        for (int m = 0; m < t1.size(); m++) {
+            if (t2.get(m).classes != null)
+                for (int i = 0; i < t2.get(m).classes.size(); i++) {
 
-            target2.addAll(transfer(t2.get(m).currentPackage));
+                    target2.addAll(transfer(t2.get(m).classes.get(i)));
+                }
+            if (t2.get(m).currentPackage != null)
+                target2.addAll(transfer(t2.get(m).currentPackage));
 
-
-            target1.addAll(transfer(t2.get(m).imports));
+            if (t2.get(m).imports != null)
+                target2.addAll(transfer(t2.get(m).imports));
 
         }
-        result = calculateResult(target1,target2);
+
+        if (target1.isEmpty() && target2.isEmpty()) {
+            result = 1.0;
+        } else if (target1.isEmpty() || target2.isEmpty()) {
+            result = 0.0;
+        } else {
+            result = calculateResult(target1, target2);
+        }
     }
 
 
-    public double calculateResult(List<String> target1, List<String> target2){
-        double count =0.0;
+    /**
+     * calculate the difference between the String data of two AST using ngram
+     *
+     * @param target1 the String list data of the first targer
+     * @param target2 the  String list data of the second targer
+     */
+    public double calculateResult(List<String> target1, List<String> target2) {
+        double count = 0.0;
         double result;
-        if(target1.size()<=target2.size()){
-            for(int i = 0;i<target1.size();i++){
-                if(target2.contains(target1.get(i))){
+        if (target1.size() <= target2.size()) {
+            for (int i = 0; i < target1.size(); i++) {
+                if (target2.contains(target1.get(i))) {
                     count++;
                 }
             }
-             result = count/target1.size();
-        }
-        else {
-            for(int i = 0;i<target2.size();i++){
-                if(target1.contains(target2.get(i))){
+            result = count / target1.size();
+        } else {
+            for (int i = 0; i < target2.size(); i++) {
+                if (target1.contains(target2.get(i))) {
                     count++;
                 }
             }
-            result = count/target2.size();
+            result = count / target2.size();
         }
 
 
         return result;
     }
 
-    private List<String> transfer(ClassNode c){
+    /**
+     * Transfer the Node into String List which will be used for ngram
+     *
+     * @param c is the ClaasNode to be transfered
+     */
+    private List<String> transfer(ClassNode c) {
         List<Character> data = new ArrayList<Character>();
         List<String> result = new ArrayList<String>();
-        for(int i=0;i<c.getName().length();i++){
+        for (int i = 0; i < c.getName().length(); i++) {
 
-                if (c.getName().charAt(i)!=' ')
-                    data.add(c.getName().charAt(i));
+            if (c.getName().charAt(i) != ' ')
+                data.add(c.getName().charAt(i));
 
         }
 
-        for(int i=0;i<c.getFeilds().size();i++) {
+        for (int i = 0; i < c.getFeilds().size(); i++) {
             for (int j = 0; j < c.getFeilds().get(i).length(); j++) {
-            if(c.getFeilds().get(i).charAt(j)!=' '){
-                data.add(c.getFeilds().get(i).charAt(j));
-            }
+                if (c.getFeilds().get(i).charAt(j) != ' ') {
+                    data.add(c.getFeilds().get(i).charAt(j));
+                }
             }
         }
 
-        for(int i=0;i<c.getMethods().size();i++) {
+        for (int i = 0; i < c.getMethods().size(); i++) {
             for (int j = 0; j < c.getMethods().get(i).getName().length(); j++) {
-                if(c.getMethods().get(i).getName().charAt(j)!=' '){
+                if (c.getMethods().get(i).getName().charAt(j) != ' ') {
                     data.add(c.getMethods().get(i).getName().charAt(j));
 
                 }
             }
-            for (int j = 0; j < c.getMethods().get(i).getBody().size();j++){
-                for(int k =0; k <c.getMethods().get(i).getBody().get(j).length();k++){
-                    if(c.getMethods().get(i).getBody().get(j).charAt(k)!=' '){
+            for (int j = 0; j < c.getMethods().get(i).getBody().size(); j++) {
+                for (int k = 0; k < c.getMethods().get(i).getBody().get(j).length(); k++) {
+                    if (c.getMethods().get(i).getBody().get(j).charAt(k) != ' ') {
                         data.add(c.getMethods().get(i).getBody().get(j).charAt(k));
                     }
                 }
@@ -122,15 +167,15 @@ public class NGramComparison {
         }
 
 
-        if(data.size()==0){
-            result.add("");
-        }
-        else if(data.size()<N){
+//        if(data.size()==0){
+//            result.add("");
+//        }
+//        else
+        if (data.size() < N) {
             for (int i = 0; i < data.size(); i++) {
                 result.add(data.get(i) + "");
             }
-        }
-        else {
+        } else {
             for (int i = 0; i <= (data.size() - N); i++) {
                 String temp = "";
                 for (int j = 0; j < N; j++) {
@@ -143,25 +188,28 @@ public class NGramComparison {
         return result;
     }
 
-    private List<String> transfer(ImportNode imports){
+    /**
+     * Transfer the Node into String List which will be used for ngram
+     *
+     * @param imports is the ImportNode to be transfered
+     */
+    private List<String> transfer(ImportNode imports) {
         List<Character> data = new ArrayList<Character>();
         List<String> result = new ArrayList<String>();
 
-        for(int i=0;i<imports.getImports().size();i++){
-            for(int j=0;j< imports.getImports().get(i).length();j++) {
-                if (imports.getImports().get(i).charAt(j)!=' ')
+        for (int i = 0; i < imports.getImports().size(); i++) {
+            for (int j = 0; j < imports.getImports().get(i).length(); j++) {
+                if (imports.getImports().get(i).charAt(j) != ' ')
                     data.add(imports.getImports().get(i).charAt(j));
             }
         }
-        if(data.size()==0){
+        if (data.size() == 0) {
             result.add("");
-        }
-        else if(data.size()<N){
+        } else if (data.size() < N) {
             for (int i = 0; i < data.size(); i++) {
                 result.add(data.get(i) + "");
             }
-        }
-        else {
+        } else {
             for (int i = 0; i <= (data.size() - N); i++) {
                 String temp = "";
                 for (int j = 0; j < N; j++) {
@@ -174,25 +222,27 @@ public class NGramComparison {
         return result;
 
 
-
     }
 
-    private List<String> transfer(PackageNode p){
+    /**
+     * Transfer the Node into String List which will be used for ngram
+     *
+     * @param p is the PackageNode to be transfered
+     */
+    private List<String> transfer(PackageNode p) {
         List<Character> data = new ArrayList<Character>();
         List<String> result = new ArrayList<String>();
-        for(int i=0;i<p.getName().length();i++){
-            if(p.getName().charAt(i)!=' ')
-            data.add(p.getName().charAt(i));
+        for (int i = 0; i < p.getName().length(); i++) {
+            if (p.getName().charAt(i) != ' ')
+                data.add(p.getName().charAt(i));
         }
-        if(data.size()==0){
+        if (data.size() == 0) {
             result.add("");
-        }
-        else if(data.size()<N){
+        } else if (data.size() < N) {
             for (int i = 0; i < data.size(); i++) {
                 result.add(data.get(i) + "");
             }
-        }
-        else {
+        } else {
             for (int i = 0; i <= (data.size() - N); i++) {
                 String temp = "";
                 for (int j = 0; j < N; j++) {
@@ -205,6 +255,9 @@ public class NGramComparison {
         return result;
     }
 
+    /**
+     * @return the result of the comparison
+     */
     public double getResult() {
         return result;
     }

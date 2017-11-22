@@ -10,7 +10,6 @@ import core.PlagiarismDetection.Submission;
 public class Factory extends AbstractFactory {
 
     /**
-     *
      * @return the Assignment (an instance of Assignment)
      */
     public Assignment createAssignment() {
@@ -18,7 +17,6 @@ public class Factory extends AbstractFactory {
     }
 
     /**
-     *
      * @return the Submission
      */
     public Submission createSubmission() {
@@ -26,9 +24,8 @@ public class Factory extends AbstractFactory {
     }
 
     /**
-     *
      * @param studentID is the unique ID given to each Student
-     * @param name is the name of the student
+     * @param name      is the name of the student
      * @return the Submission with the given studentID and name
      */
     public Submission createSubmission(int studentID, String name) {
@@ -36,9 +33,8 @@ public class Factory extends AbstractFactory {
     }
 
     /**
-     *
      * @param studentID is the unique ID given to each Student
-     * @param name is the name of the student
+     * @param name      is the name of the student
      * @param filePaths is the absolute paths to each file uploaded by the student
      * @param fileNames is the file names of each file uploaded by the students
      * @return the Submission with the given studentID, name, filePaths and fileNames
@@ -48,7 +44,6 @@ public class Factory extends AbstractFactory {
     }
 
     /**
-     *
      * @return the Writer
      */
     public Writer Writer() {
@@ -56,8 +51,9 @@ public class Factory extends AbstractFactory {
     }
 
     /**
-     *
      * @return the Reader
      */
-    public Reader Reader() { return new Reader(); }
+    public Reader Reader() {
+        return new Reader();
+    }
 }

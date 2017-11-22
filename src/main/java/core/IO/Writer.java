@@ -25,11 +25,11 @@ public class Writer {
     /**
      * This method is used to write the file on to disk
      * Ex : if the StudentID is 1, file name "Hello.java" and some content
-     *      This function creates a folder called "1" under "upload" folder and creates a file named "Hello.java"
-     *      and writes the contents onto it.
+     * This function creates a folder called "1" under "upload" folder and creates a file named "Hello.java"
+     * and writes the contents onto it.
      *
-     * @param studentID is the unique ID given to each student while uploading a file
-     * @param name is the name of the file
+     * @param studentID   is the unique ID given to each student while uploading a file
+     * @param name        is the name of the file
      * @param fileContent is the actual content of the file
      * @return a String which is the absolute path to the file on the disk
      * @throws IOException when there is an error in writing the file
@@ -55,7 +55,7 @@ public class Writer {
         // Get the pointer to the "upload" directory on the disk and delete every sub-folder under it
         File currentDir = new File(pathToUploadFolder);
         File[] files = currentDir.listFiles();
-        if(files != null) {
+        if (files != null) {
             for (File file : files) {
                 if (file.isDirectory()) {
                     File[] insidefiles = file.listFiles();
@@ -71,7 +71,6 @@ public class Writer {
     /* Private methods which act as helper methods */
 
     /**
-     *
      * @param studentID is the unique ID given to each Student when uploading
      * @return a String which is the absolute path to the "Student's folder" inside the "upload" folder
      */
@@ -95,7 +94,6 @@ public class Writer {
     }
 
     /**
-     *
      * @return true iff the "upload" folder exists; else false
      */
     private Boolean checkUploadFolder() {
@@ -108,11 +106,11 @@ public class Writer {
      * Given a StudentID and file name, this method, creates a folder with studentID as name and create a file with given
      * file name.
      * Ex: if studentID is 1, and name is "Hello.java"
-     *     a folder named "1" is created inside "upload" folder and a file called "Hello.java" is created inside the folder
-     *     The file name is changed as "1-Hello.java"
+     * a folder named "1" is created inside "upload" folder and a file called "Hello.java" is created inside the folder
+     * The file name is changed as "1-Hello.java"
      *
      * @param studentID is the unique ID given to each student while uploading
-     * @param name of the file
+     * @param name      of the file
      * @return a String which is the absolute path to the file
      * @throws IOException when there is error creating a folder
      */

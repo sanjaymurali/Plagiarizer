@@ -9,14 +9,13 @@ import java.io.*;
 public class Reader {
 
     /**
-     *
      * @param pathToFile is the absolute path to the file in the disk
      * @return a String which is the content of the file in "UTF-8" format
      * @throws IOException when the file cannot be read
      */
-    public String getFile(String pathToFile) throws IOException{
+    public String getFile(String pathToFile) throws IOException {
         // check if file exists and then read from it
-        if(checkFileExists(pathToFile)) {
+        if (checkFileExists(pathToFile)) {
             BufferedReader inputStream = null;
             try {
                 // contains the content of the file in UTF-8
@@ -38,7 +37,6 @@ public class Reader {
     }
 
     /**
-     *
      * @param pathToFile is the absolute path to the file in the disk
      * @return a Boolean, true iff the file exists on the disk, else false
      */
@@ -46,7 +44,7 @@ public class Reader {
         // Pointer to the file
         File file = new File(pathToFile);
         // check if the file exists
-        if(file.exists())
+        if (file.exists())
             return true;
         else
             return false;
