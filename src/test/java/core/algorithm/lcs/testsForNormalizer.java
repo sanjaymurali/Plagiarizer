@@ -22,23 +22,23 @@ public class testsForNormalizer {
         String expected = "class Rectangle {\n" +
                 "private int variable;\n" +
                 "private int variable;\n" +
-                "public Rectangle(int variable, int variable){\n" +
+                "public Rectangle(int variable, int variable) {\n" +
                 "this.variable = variable;\n" +
                 "this.variable = variable;\n" +
                 "}\n" +
-                "public int method(){\n" +
+                "public int method() {\n" +
                 "return variable * variable;\n" +
                 "}\n" +
-                "private void method(){\n" +
+                "private void method() {\n" +
                 "int j;\n" +
-                "for (int i = 0;i < 100;i++){\n" +
+                "for (int i = 0;i < 100;i++) {\n" +
                 "j = i;\n" +
                 "}\n" +
                 "}\n" +
-                "static int method(){\n" +
+                "static int method() {\n" +
                 "return 100;\n" +
                 "}\n" +
-                "public void method(int i){\n" +
+                "public void method(int i) {\n" +
                 "i = 5000;\n" +
                 "}}";
         Assert.assertEquals(s.getNormalized(), expected);

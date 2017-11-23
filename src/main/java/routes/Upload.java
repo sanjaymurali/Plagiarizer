@@ -62,7 +62,6 @@ public class Upload {
                     MultipartFile currentFile = filesIterator.next();
                     // File Content and File name
                     byte[] x = currentFile.getBytes();
-                    System.out.println(x);
                     String fileName = currentFile.getOriginalFilename();
                     fileNames[i] = fileName;
                     // Absolute path in disk to uploaded file
@@ -70,14 +69,12 @@ public class Upload {
                     i++;
                 }
             } catch (IOException e) {
-                System.out.println("Exception!");
                 return ApplicationConfig.ErrorResponse();
             }
 
 
             submission.setFilePaths(paths); // this sets absolute path of all uploaded files to a particular student
             submission.setFileNames(fileNames); // this sets files names of all uploaded files to a particular student
-            System.out.println(submission.toString());
             // Push the submission into the assignment
             a.pushSubmissions(submission);
 
