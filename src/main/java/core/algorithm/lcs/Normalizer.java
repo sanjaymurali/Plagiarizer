@@ -52,12 +52,20 @@ public class Normalizer {
      * Runs normalization functions on string representation of file
      */
     public void runNormalization() {
+        System.out.println("1In here!");
         this.removeComments();
+        System.out.println("2In here!");
         this.removeExtraSpacesAndLines();
+        System.out.println("3In here!");
         this.removePackagesAndImports();
+        System.out.println("4In here!");
         this.organize();
+        System.out.println("5In here!");
         this.replaceVariables();
+        System.out.println("6In here!");
         this.replaceMethods();
+        System.out.println("7In here!");
+        this.normalized = this.normalized.trim();
     }
 
     /**
@@ -211,14 +219,17 @@ public class Normalizer {
      * @return name of the class
      */
     private String findClassName() {  //TODO make this tolerate less standard class names (i.e. extends... implements...) through regex (started w/ commented out lines)
+        String className = null;
         String header = this.findHeader();
         //String pattern = "([a-zA-Z_$][\\w$]*)";
         //Pattern p = Pattern.compile(pattern);
         //Matcher m = p.matcher(header);
-        String className = header.replace("(public|protected|private|static|)", "").trim();
-        className = className.replace("class", "").trim();
-        className = className.replace("{", "").trim();
-        //className = className.substring(0, m.end());
+        if (header != null) {
+            className = header.replace("(public|protected|private|static|)", "").trim();
+            className = className.replace("class", "").trim();
+            className = className.replace("{", "").trim();
+            //className = className.substring(0, m.end());
+        }
         return className;
 
     }
@@ -230,27 +241,34 @@ public class Normalizer {
      */
     private String findConstructor() {
         String constructor = null;
-        String className = this.findClassName();
-        String pattern = "(public)+(\\s)" + className; //TODO - may be able to replace do while loop by using regex to find up to last } ?
-        Pattern p = Pattern.compile(pattern);
-        Matcher m = p.matcher(this.getNormalized());
+        String className = null;
+        className = this.findClassName();
+        String pattern = null;
+        Pattern p = null;
+        Matcher m = null;
+        if (className != null) {
+            pattern = "(public)+(\\s)" + className; //TODO - may be able to replace do while loop by using regex to find up to last } ?
+            p = Pattern.compile(pattern);
+            m = p.matcher(this.getNormalized());
 
-        if (m.find()) {
-            int i = m.start();
-            int openBraces = 0;
-            int closedBraces = 0;
-            do {
-                Character c = this.getNormalized().charAt(i);
-                if (c == '{') {
-                    openBraces++;
 
-                } else if (c == '}') {
-                    closedBraces++;
+            if (m.find()) {
+                int i = m.start();
+                int openBraces = 0;
+                int closedBraces = 0;
+                do {
+                    Character c = this.getNormalized().charAt(i);
+                    if (c == '{') {
+                        openBraces++;
 
-                }
-                ++i;
-            } while (openBraces == 0 || openBraces != closedBraces);
-            constructor = this.normalized.substring(m.start(), i);
+                    } else if (c == '}') {
+                        closedBraces++;
+
+                    }
+                    ++i;
+                } while (openBraces == 0 || openBraces != closedBraces);
+                constructor = this.normalized.substring(m.start(), i);
+            }
         }
 
         return constructor;
