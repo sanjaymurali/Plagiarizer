@@ -7,7 +7,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * A class constructed for purposes of testing the implementation of the LCS algorithm.
  */
-public class testsForLCS {
+public class LCSTests {
 
 
     @Test

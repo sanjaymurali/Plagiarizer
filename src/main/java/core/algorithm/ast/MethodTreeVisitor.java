@@ -60,10 +60,22 @@ public  class MethodTreeVisitor extends VoidVisitorAdapter {
             for(int i=0;i<n.getBody().get().getStatements().size();i++){
                 String body = n.getBody().get().getStatement(i).toString();
                 if (n.getBody().get().getStatement(i).isExpressionStmt()){
+                    if(body.contains("Map")){
+                        String[] temp = body.split(">");
+                        temp[1]=temp[1].split(" ")[1];
 
-                    String [] temp = body.split(" ");
-                    var.add(temp[1]);
-                    body=body.replaceAll(temp[1],"v");
+                        var.add(temp[1]);
+                        body = body.replaceAll(temp[1], "v");
+
+                    }
+                    else {
+                        String[] temp = body.split(" ");
+                        if (temp.length >= 2)
+                            if (!isConSpecChar(temp[1])) {
+                                var.add(temp[1]);
+                                body = body.replaceAll(temp[1], "v");
+                            }
+                    }
                 }
                 else{
                     for(int j =0;j<var.size();j++){
@@ -89,6 +101,20 @@ public  class MethodTreeVisitor extends VoidVisitorAdapter {
      */
     public List<MethodNode> getTree(){
         return  tree;
+    }
+
+    /**
+     * Check if the stirng includ some special Char
+     * @return ture if  include
+     *
+     */
+    private boolean isConSpecChar(String string) {
+
+        if(string.replaceAll("[\u4e00-\u9fa5]*[a-z]*[A-Z]*\\d*-*_*\\s*", "").length()==0){
+
+            return false;
+        }
+        return true;
     }
 
 }

@@ -20,7 +20,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class SubmissionTest {
+public class SubmissionTests {
 
     Factory factory = new Factory();
     Assignment assignment = factory.createAssignment();

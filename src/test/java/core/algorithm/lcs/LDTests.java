@@ -7,7 +7,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * A test suite to test our Levenshtien Distance implementation.
  */
-public class testsForLD {
+public class LDTests {
 
     @Test
     public void testSameString() {

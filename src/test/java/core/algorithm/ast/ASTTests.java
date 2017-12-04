@@ -7,20 +7,35 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ASTtests {
+public class ASTTests {
 
     private  AstTree tree = new AstTree();
     private  AstTree tree2 = new AstTree();
     private  AstTree tree3= new AstTree();
     private NGramComparison comparison = new NGramComparison();
     private AstTree testTree = new AstTree();
-    public  ASTtests() throws IOException {
+    public  ASTTests() throws IOException {
 
         tree.buildTree("test","src/main/resources/tests/MergeSorter.java");
 
         tree2.buildTree("test","src/main/resources/tests/MergeSorter2.java");
         tree3.buildTree("test","src/main/resources/tests/QuickSorter.java");
 
+    }
+
+    @Test
+    public void test0() throws IOException {
+        String[] A = new String[1];
+        String[] B = new String[1];
+
+
+        A[0]="src/main/resources/tests/SolutionA.java";
+        B[0]="src/main/resources/tests/SolutionB.java";
+
+        NGramComparison c = new NGramComparison();
+        c.nGramComparison(A,B);
+        System.out.println(c.getResult());
+        Assert.assertEquals(c.getResult(),0.7,0.1);
     }
 
 
@@ -41,7 +56,7 @@ public class ASTtests {
 
         List<String> s2 = new ArrayList<>();
         s2.add("Comparable[] v = new Comparable[list.length];");
-        s2.add("mergerSort(list, v list.length - 1, temp);");
+        s2.add("mergerSort(list, 0, list.length - 1, temp);");
 
         Assert.assertEquals(tree.classes.get(0).getMethods().get(0).getName(),"public void m(Comparable[] list)");
         Assert.assertEquals(tree.classes.get(0).getMethods().get(0).getType(),"void");

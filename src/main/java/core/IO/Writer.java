@@ -78,7 +78,7 @@ public class Writer {
         // pointer to the folder containing the Student's file
         File currentDir = new File(pathToUploadFolder + studentID);
         if (!currentDir.exists()) {
-            currentDir.mkdir();
+            currentDir.mkdirs();
         }
         return currentDir.getAbsolutePath();
     }
@@ -118,7 +118,8 @@ public class Writer {
         // create a directory for student and then create the file inside of it.
         String pathToFolder = createFolderForStudentSubmission(studentID);
 
-        File currentFile = new File(pathToFolder + "/" + studentID + "-" + name);
+        File currentFile = new File(pathToFolder + File.separator + studentID + "-" + name);
+        System.out.println("Sanjay " + pathToFolder + File.separator + studentID + "-" + name);
         if (!currentFile.exists()) {
             currentFile.createNewFile();
         }

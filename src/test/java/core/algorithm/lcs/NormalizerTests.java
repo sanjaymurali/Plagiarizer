@@ -10,7 +10,7 @@ import static junit.framework.TestCase.fail;
 /**
  * Test suite that ensures files are read and normalized correctly.
  */
-public class testsForNormalizer {
+public class NormalizerTests {
 
     String pathToFolder = "src/main/resources/tests/";
 
