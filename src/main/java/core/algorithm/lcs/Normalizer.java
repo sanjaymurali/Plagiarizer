@@ -8,10 +8,14 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-//TODO support declarations where variable is assigned.
 
 /**
  * Normalizer to get files ready for comparison.
+ * <p>
+ * Limitations; future enhancements:
+ * - Support instance variables where static value is set.
+ * - Support instance variables with [] characters.
+ * - More robustly handle duplicate names throughout program.
  */
 public class Normalizer {
     private String normalized;
@@ -49,7 +53,7 @@ public class Normalizer {
         this.removeComments();
         this.removeExtraSpacesAndLines();
         this.removePackagesAndImports();
-        this.replaceVariables();
+        this.replaceInstanceVariables();
         this.replaceMethods();
         this.organize();
         this.removeExtraSpacesAndLines();
@@ -60,14 +64,14 @@ public class Normalizer {
      * Runs only variable and method normalization on string representation of file
      */
     public void runPartialNormalization() {
-        this.replaceVariables();
+        this.replaceInstanceVariables();
         this.replaceMethods();
     }
 
     /**
      * Finds header, constructor, and variable declarations and restructures string in a standard order:
      * 1. Header
-     * 2. Variable Declarations
+     * 2. Instance variable declarations
      * 3. Constructor
      * 4. Private Methods
      * 4. Other Methods
@@ -75,7 +79,7 @@ public class Normalizer {
     private void organize() {
         String organized = "";
 
-        /* Find and remove CONSTRUCTOR */ //TODO - why only works before header and variable declarations?
+        /* Find and remove CONSTRUCTOR */
         String constructor = this.findConstructor();
         if (constructor == null) {
             constructor = "";
@@ -91,40 +95,15 @@ public class Normalizer {
             this.normalized = this.normalized.replace(header, "");
         }
 
-        /* Find and remove VARIABLE DECLARATIONS */
-        ArrayList variableDeclarations = this.findVariableDeclarations();
-        String variableList = null;
-        if (variableDeclarations.isEmpty()) {
-            variableList = "";
-        } else {
-            variableList = "";
-            for (int i = 0; i < variableDeclarations.size(); ++i) {
-                String dec = (String) variableDeclarations.get(i);
-                this.normalized = this.normalized.replace(dec.trim(), ""); //NEW
-                variableList = variableList.concat(dec).concat(" ");
-
-            }
-
-        }
+        /* Find and remove INSTANCE VARIABLE DECLARATIONS */
+        ArrayList variableDeclarations = this.findInstanceVariableDeclarations();
+        String variableList = this.isolateAndRemove(variableDeclarations);
 
         /* Find and remove PRIVATE CLASSES */
         ArrayList privateClasses = this.findPrivateClasses();
-        String privateClassNames = null;
-        if (privateClasses.isEmpty()) {
-            privateClassNames = "";
-        } else {
-            privateClassNames = "";
-            for (int i = 0; i < privateClasses.size(); ++i) {
-                String pc = (String) privateClasses.get(i);
-                this.normalized = this.normalized.replace(pc.trim(), "");
-                privateClassNames = privateClassNames.concat(pc).concat(" ");
-
-            }
-
-        }
+        String privateClassNames = this.isolateAndRemove(privateClasses);
 
         /* Reorganize string representation of file in standard order */
-
         organized = organized.concat(header);
         organized = organized.concat(variableList);
         organized = organized.concat(constructor);
@@ -134,8 +113,33 @@ public class Normalizer {
         this.normalized = organized;
     }
 
+    /**
+     * Removes package and import statments from java classes.
+     */
     private void removePackagesAndImports() {
         this.normalized = this.normalized.replaceAll("(import|package).+?;", "").trim();
+    }
+
+    /**
+     * Removes String representation of group from normalized string and returns representation.
+     *
+     * @param group set of strings to remove from normalized string
+     * @return string representation of group from normalized string
+     */
+    private String isolateAndRemove(ArrayList group) {
+        String groupNames = null;
+        if (group.isEmpty()) {
+            groupNames = "";
+        } else {
+            groupNames = "";
+            for (int i = 0; i < group.size(); ++i) {
+                String pc = (String) group.get(i);
+                this.normalized = this.normalized.replace(pc.trim(), "");
+                groupNames = groupNames.concat(pc).concat(" ");
+
+            }
+        }
+        return groupNames;
     }
 
     /**
@@ -160,10 +164,9 @@ public class Normalizer {
      *
      * @return array list with all variables in the program
      */
-    private ArrayList<String> findVariables() {
-        //TODO doesn't work yet with variables like ArrayList<string> b/c of characters
+    private ArrayList<String> findInstanceVariables() {
         ArrayList<String> variables = new ArrayList<String>();
-        ArrayList<String> variableDeclarations = this.findVariableDeclarations();
+        ArrayList<String> variableDeclarations = this.findInstanceVariableDeclarations();
         if (variableDeclarations.isEmpty()) {
             return variables;
         } else {
@@ -186,10 +189,10 @@ public class Normalizer {
     }
 
     /**
-     * Replaces all variables in the program with a standard name.
+     * Replaces all instance variables in the program with a standard name.
      */
-    private void replaceVariables() {
-        ArrayList<String> variables = this.findVariables();
+    private void replaceInstanceVariables() {
+        ArrayList<String> variables = this.findInstanceVariables();
         if (!variables.isEmpty()) {
             this.replace(replacementVariableName, variables);
         }
@@ -229,6 +232,11 @@ public class Normalizer {
         return header;
     }
 
+    /**
+     * Finds the private classes within the class.
+     *
+     * @return private classes within the class.
+     */
     private ArrayList findPrivateClasses() {
         ArrayList<String> privateClasses = new ArrayList<String>();
         String pc = null;
@@ -236,32 +244,43 @@ public class Normalizer {
         Matcher m = Pattern.compile(pattern).matcher(this.getNormalized());
         while (m.find()) {
             int i = m.end();
-            int openBraces = 1;
-            int closedBraces = 0;
-            do {
-                Character c = this.getNormalized().charAt(i);
-                if (c == '{') {
-                    openBraces++;
-
-                } else if (c == '}') {
-                    closedBraces++;
-
-                }
-                ++i;
-            } while (openBraces == 0 || openBraces != closedBraces);
-            pc = this.normalized.substring(m.start(), i);
+            pc = this.getNormalized().substring(m.start(), i).concat(this.findBetweenBraces(i));
             privateClasses.add(pc);
         }
         return privateClasses;
     }
 
+    /**
+     * Finds the substring between curly braces in the normalized string starting at the index provided
+     *
+     * @param start index where open curly brace is found "{"
+     * @return substring of text between and including curly braces
+     */
+    private String findBetweenBraces(int start) {
+        int i = start;
+        int openBraces = 0;
+        int closedBraces = 0;
+        do {
+            Character c = this.getNormalized().charAt(i);
+            if (c == '{') {
+                openBraces++;
+
+            } else if (c == '}') {
+                closedBraces++;
+
+            }
+            ++i;
+        } while (openBraces == 0 || openBraces != closedBraces);
+        String result = this.normalized.substring(start, i);
+        return result;
+    }
 
     /**
      * Finds the variable declarations for the class.
      *
      * @return variable declarations for the class
      */
-    private ArrayList<String> findVariableDeclarations() { //TODO STILL DOESN'T WORK FOR [] VARIABLES
+    private ArrayList<String> findInstanceVariableDeclarations() {
         ArrayList declarations = new ArrayList<String>();
         String pattern = "(public|protected|private|static)(\\s)(([a-zA-Z][\\w]*)(<[a-zA-Z][\\w]*>)|([a-zA-Z][\\w]*)([a-zA-Z][\\w]*))( [a-zA-Z][\\w]*)(;)";
         Matcher m = Pattern.compile(pattern).matcher(this.getNormalized());
@@ -339,23 +358,9 @@ public class Normalizer {
             pattern = "(public)+(\\s)" + className;
             m = Pattern.compile(pattern).matcher(this.getNormalized());
 
-
             if (m.find()) {
                 int i = m.start();
-                int openBraces = 0;
-                int closedBraces = 0;
-                do {
-                    Character c = this.getNormalized().charAt(i);
-                    if (c == '{') {
-                        openBraces++;
-
-                    } else if (c == '}') {
-                        closedBraces++;
-
-                    }
-                    ++i;
-                } while (openBraces == 0 || openBraces != closedBraces);
-                constructor = this.normalized.substring(m.start(), i);
+                constructor = this.findBetweenBraces(i);
             }
         }
 
@@ -377,7 +382,7 @@ public class Normalizer {
             String methodName = methodDeclaration.replace("(public|protected|private|static|public static|" +
                     "private static|protected static_)", "").trim();
             methodName = methodName.replaceAll(("([a-zA-Z][\\w]*.\\s)"), "").trim();
-            if (!methodName.equals(replacementMethodName) && !methodName.equals(replacementVariableName)){
+            if (!methodName.equals(replacementMethodName) && !methodName.equals(replacementVariableName)) {
                 methods.add(methodName);
             }
         }

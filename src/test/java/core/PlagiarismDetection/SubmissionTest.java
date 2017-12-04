@@ -113,7 +113,7 @@ public class SubmissionTest {
         String[] files = {"1.java", "2.java"};
         Submission submission = factory.createSubmission(2, "Sanjay", files, files);
         Writer writer = factory.Writer();
-        assertThat(submission.storeSubmission(writer, "Sanjay", "sanjay".getBytes()), containsString("2/2-Sanjay"));
+        assertThat(submission.storeSubmission(writer, "Sanjay", "sanjay".getBytes()), containsString("2-Sanjay"));
     }
 
     @Test
