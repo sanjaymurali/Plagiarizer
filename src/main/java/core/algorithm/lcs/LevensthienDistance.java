@@ -3,29 +3,35 @@ package core.algorithm.lcs;
 /**
  * A class representing the Levenshtien Distance algorithm for computing the amount
  * of operations needed to convert one string into another.
+ *
+ * Of note, the prior implementation simply held a static method, but was changed to this for
+ * better memory management. In addition, we could add related methods to this class which could
+ * show what was edited, etc, that otherwise would not have made sense with just the use of a
+ * static method.
  */
 
 public class LevensthienDistance {
 
+    private int editDistance;
 
     /**
-     * Calculates the minimum amount of operations neede to edit one string to be a replica of another
-     * (this is otherwise known as Levenshtien Distance).
-     *
-     * @param one the first String.
-     * @param two the second String.
-     * @return an integer value representing the minimum amount of edits needed.
+     * The constructor which modifies the private field, editDistance, which
+     * tracks the amount of operations it would take to edit one distance into another.
+     * @param one
+     * @param two
      */
-    public static int editDistance(String one, String two) {
-
+    public LevensthienDistance(String one, String two) {
         if (one == null && two != null) {
-            return two.length();
+            editDistance = two.length();
+            return;
         }
         if (one != null && two == null) {
-            return one.length();
+            editDistance = one.length();
+            return;
         }
         if (one == null && two == null) {
-            return 0;
+            editDistance = 0;
+            return;
         }
 
         int lengthOne = one.length();
@@ -40,22 +46,11 @@ public class LevensthienDistance {
         }
         for (int i = 0; i < lengthOne + 1; i++) {
             for (int j = 0; j < lengthTwo + 1; j++) {
-                System.out.print(distance[i][j]);
-            }
-            System.out.println();
-        }
-
-        for (int i = 0; i < lengthOne + 1; i++) {
-            for (int j = 0; j < lengthTwo + 1; j++) {
                 if (i == 0) {
                     distance[i][j] = j;
                 } else if (j == 0) {
                     distance[i][j] = i;
-                }
-//                else if (one.charAt(i-1) == two.charAt(j-1)) {
-//                    distance[i][j] = distance[i-1][j-1];
-//                }
-                else if (one.charAt(i - 1) == two.charAt(j - 1)) {
+                } else if (one.charAt(i - 1) == two.charAt(j - 1)) {
                     distance[i][j] = Math.min(Math.min(distance[i - 1][j - 1], distance[i - 1][j]), distance[i][j - 1]);
                 } else if (one.charAt(i - 1) != two.charAt(j - 1)) {
                     // This has the substitution, insertion, and deletion, all being valued as one operation.
@@ -65,17 +60,18 @@ public class LevensthienDistance {
                 }
             }
         }
-
-        for (int i = 0; i < lengthOne + 1; i++) {
-            for (int j = 0; j < lengthTwo + 1; j++) {
-                System.out.print(distance[i][j] + " ");
-            }
-            System.out.println();
-        }
-
-        System.out.println("Edit Distance is: " + distance[lengthOne][lengthTwo]);
-        return distance[lengthOne][lengthTwo];
+        editDistance = distance[lengthOne][lengthTwo];
 
     }
+
+    /**
+     * Getter function to return the amount of operations it takes to manipulate
+     * one String into another.
+     * @return the amount of edits represented by an integer.
+     */
+    public int getEditDistance() {
+        return editDistance;
+    }
+
 
 }

@@ -4,8 +4,8 @@ import core.PlagiarizerFactory.Factory;
 import core.configuration.ApplicationConfig;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockito.Mock;
 
 import java.io.File;
 
@@ -17,14 +17,31 @@ public class WriterTests {
     // The Writer tests give 100% code coverage when the "uploads" folder under src/main/resources is deleted
     Writer writer;
 
-    @Mock
-    ApplicationConfig mock;
-
     @Before
     public void setup() {
         Factory factory = new Factory();
         writer = factory.Writer();
     }
+
+    @BeforeClass
+    public static void beforetests() {
+        String pathToUploadFolder = ApplicationConfig.pathToUploadFolder;
+        File currentDir = new File(pathToUploadFolder);
+        File[] files = currentDir.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    File[] insidefiles = file.listFiles();
+                    for (File insidefile : insidefiles) {
+                        insidefile.delete();
+                    }
+                }
+                file.delete();
+            }
+        }
+        currentDir.delete();
+    }
+
 
     @Test
     public void test1() throws Exception {

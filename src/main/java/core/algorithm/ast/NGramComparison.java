@@ -67,6 +67,8 @@ public class NGramComparison {
         if(t2.imports!=null)
             target1.addAll(transfer(t2.imports));
 
+
+
         if(target1.isEmpty()&&target2.isEmpty()){
             result = 1.0;
         }
@@ -136,17 +138,23 @@ public class NGramComparison {
         double count =0.0;
         double result;
         if(target1.size()<=target2.size()){
+
             for(int i = 0;i<target1.size();i++){
+
                 if(target2.contains(target1.get(i))){
                     count++;
+                    target2.remove(target1.get(i));
                 }
             }
             result = count/target1.size();
         }
         else {
+
             for(int i = 0;i<target2.size();i++){
+
                 if(target1.contains(target2.get(i))){
                     count++;
+                    target1.remove(target2.get(i));
                 }
             }
             result = count/target2.size();
@@ -195,23 +203,15 @@ public class NGramComparison {
         }
 
 
-//        if(data.size()==0){
-//            result.add("");
-//        }
-//        else
+
         if(data.size()<N){
             for (int i = 0; i < data.size(); i++) {
                 result.add(data.get(i) + "");
             }
         }
         else {
-            for (int i = 0; i <= (data.size() - N); i++) {
-                String temp = "";
-                for (int j = 0; j < N; j++) {
-                    temp = temp + data.get(i + j);
-                }
-                result.add(temp);
-            }
+
+            result.addAll(makeNString(data));
         }
 
         return result;
@@ -231,22 +231,15 @@ public class NGramComparison {
                     data.add(imports.getImports().get(i).charAt(j));
             }
         }
-        if(data.size()==0){
-            result.add("");
-        }
-        else if(data.size()<N){
+
+            if(data.size()<N){
             for (int i = 0; i < data.size(); i++) {
                 result.add(data.get(i) + "");
             }
         }
         else {
-            for (int i = 0; i <= (data.size() - N); i++) {
-                String temp = "";
-                for (int j = 0; j < N; j++) {
-                    temp = temp + data.get(i + j);
-                }
-                result.add(temp);
-            }
+
+            result.addAll(makeNString(data));
         }
 
         return result;
@@ -266,27 +259,37 @@ public class NGramComparison {
             if(p.getName().charAt(i)!=' ')
                 data.add(p.getName().charAt(i));
         }
-        if(data.size()==0){
-            result.add("");
-        }
-        else if(data.size()<N){
+
+            if(data.size()<N){
             for (int i = 0; i < data.size(); i++) {
                 result.add(data.get(i) + "");
             }
         }
         else {
-            for (int i = 0; i <= (data.size() - N); i++) {
-                String temp = "";
-                for (int j = 0; j < N; j++) {
-                    temp = temp + data.get(i + j);
-                }
-                result.add(temp);
-            }
+
+            result.addAll(makeNString(data));
         }
 
         return result;
     }
 
+
+    /**
+     * create the lisf of length-n string by using the char list
+     * @param  data is the list of the char
+     */
+    private List<String> makeNString(List<Character> data){
+        List<String> result = new ArrayList<String>();
+        for (int i = 0; i <= (data.size() - N); i++) {
+            String temp = "";
+            for (int j = 0; j < N; j++) {
+                temp = temp + data.get(i + j);
+            }
+            result.add(temp);
+        }
+
+        return  result;
+    }
     /**
      *
      * @return the result of the comparison

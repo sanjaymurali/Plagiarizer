@@ -12,10 +12,10 @@ public class testsForLCS {
 
     @Test
     public void testSameString() {
-        String one = "thissyName";
-        String two = "thissyName";
+        String one = "thissy Name";
+        String two = "thissy Name";
 
-        assertEquals("thissyName", LongestCommonSubsequence.longestCommonSubsequence(one, two));
+        assertEquals(11, new LongestCommonSubsequence(one, two).getLengthOfLCS());
 
     }
 
@@ -24,7 +24,7 @@ public class testsForLCS {
         String one = "";
         String two = "";
 
-        assertEquals("", LongestCommonSubsequence.longestCommonSubsequence(one, two));
+        assertEquals(0, new LongestCommonSubsequence(one, two).getLengthOfLCS());
 
     }
 
@@ -33,7 +33,7 @@ public class testsForLCS {
         String two = "thissyName";
         String one = "";
 
-        assertEquals("", LongestCommonSubsequence.longestCommonSubsequence(one, two));
+        assertEquals(0, new LongestCommonSubsequence(one, two).getLengthOfLCS());
 
     }
 
@@ -42,7 +42,7 @@ public class testsForLCS {
         String one = "thissyName";
         String two = "";
 
-        assertEquals("", LongestCommonSubsequence.longestCommonSubsequence(one, two));
+        assertEquals(0, new LongestCommonSubsequence(one, two).getLengthOfLCS());
 
     }
 
@@ -51,7 +51,7 @@ public class testsForLCS {
         String one = "afive";
         String two = "zfour";
 
-        assertEquals("f", LongestCommonSubsequence.longestCommonSubsequence(one, two));
+        assertEquals(1, new LongestCommonSubsequence(one, two).getLengthOfLCS());
 
 
     }
@@ -61,7 +61,7 @@ public class testsForLCS {
         String one = "thissyName";
         String two = "whissysas";
 
-        assertEquals("hissya", LongestCommonSubsequence.longestCommonSubsequence(one, two));
+        assertEquals(6, new LongestCommonSubsequence(one, two).getLengthOfLCS());
 
     }
 
@@ -70,7 +70,7 @@ public class testsForLCS {
         String two = "thissyName";
         String one = "whissysas";
 
-        assertEquals("hissya", LongestCommonSubsequence.longestCommonSubsequence(one, two));
+        assertEquals(6, new LongestCommonSubsequence(one, two).getLengthOfLCS());
 
     }
 
@@ -79,7 +79,7 @@ public class testsForLCS {
         String one = "helloL";
         String two = "helloo";
 
-        assertEquals("hello", LongestCommonSubsequence.longestCommonSubsequence(one, two));
+        assertEquals(5, new LongestCommonSubsequence(one, two).getLengthOfLCS());
 
     }
 
@@ -88,7 +88,7 @@ public class testsForLCS {
         String one = "Whello";
         String two = "Yhello";
 
-        assertEquals("hello", LongestCommonSubsequence.longestCommonSubsequence(one, two));
+        assertEquals(5, new LongestCommonSubsequence(one, two).getLengthOfLCS());
 
 
     }
@@ -98,7 +98,7 @@ public class testsForLCS {
         String one = null;
         String two = "why";
 
-        assertEquals("", LongestCommonSubsequence.longestCommonSubsequence(one, two));
+        assertEquals(0, new LongestCommonSubsequence(one, two).getLengthOfLCS());
 
     }
 

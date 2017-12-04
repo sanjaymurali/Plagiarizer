@@ -16,10 +16,10 @@ public class ASTtests {
     private AstTree testTree = new AstTree();
     public  ASTtests() throws IOException {
 
-        tree.buildTree("test","src\\main\\resources\\tests\\MergeSorter.java");
+        tree.buildTree("test","src/main/resources/tests/MergeSorter.java");
 
-        tree2.buildTree("test","src\\main\\resources\\tests\\MergeSorter2.java");
-        tree3.buildTree("test","src\\main\\resources\\tests\\QuickSorter.java");
+        tree2.buildTree("test","src/main/resources/tests/MergeSorter2.java");
+        tree3.buildTree("test","src/main/resources/tests/QuickSorter.java");
 
     }
 
@@ -32,7 +32,7 @@ public class ASTtests {
     @Test
     public void testClassFeilds(){
         List<String> s = new ArrayList<>();
-        s.add("private int x;");
+        s.add("private int v;");
         Assert.assertEquals(tree.classes.get(0).getFeilds(),s);
     }
 
@@ -40,10 +40,10 @@ public class ASTtests {
     public void testMethodInformation(){
 
         List<String> s2 = new ArrayList<>();
-        s2.add("Comparable[] temp = new Comparable[list.length];");
-        s2.add("mergerSort(list, 0, list.length - 1, temp);");
+        s2.add("Comparable[] v = new Comparable[list.length];");
+        s2.add("mergerSort(list, v list.length - 1, temp);");
 
-        Assert.assertEquals(tree.classes.get(0).getMethods().get(0).getName(),"public void sort(Comparable[] list)");
+        Assert.assertEquals(tree.classes.get(0).getMethods().get(0).getName(),"public void m(Comparable[] list)");
         Assert.assertEquals(tree.classes.get(0).getMethods().get(0).getType(),"void");
         Assert.assertEquals(tree.classes.get(0).getMethods().get(0).getParameters().get(0).toString(),"Comparable[] list");
         Assert.assertEquals(tree.classes.get(0).getMethods().get(0).getBody(),s2);
@@ -162,7 +162,7 @@ public class ASTtests {
 
     @Test
     public void buildSpecialTree() throws IOException {
-        testTree.buildTree("test","src\\main\\resources\\tests\\test.java");
+        testTree.buildTree("test","src/main/resources/tests/test.java");
         comparison.nGramComparison(testTree,tree);
         Assert.assertEquals(comparison.getResult(), 0,0.1);
     }
@@ -173,11 +173,11 @@ public class ASTtests {
         String[] prject1 = new String[2];
         String[] prject2 = new String[2];
         String[] prject3 = new String[2];
-        prject1[0]="src\\main\\resources\\tests\\test.java";
-        prject1[1]="src\\main\\resources\\tests\\MergeSorter.java";
+        prject1[0]="src/main/resources/tests/test.java";
+        prject1[1]="src/main/resources/tests/MergeSorter.java";
 
-        prject2[0]="src\\main\\resources\\tests\\MergeSorter2.java";
-        prject2[1]="src\\main\\resources\\tests\\QuickSorter.java";
+        prject2[0]="src/main/resources/tests/MergeSorter2.java";
+        prject2[1]="src/main/resources/tests/QuickSorter.java";
         comparison.nGramComparison(prject1,prject1);
         Assert.assertEquals(comparison.getResult(), 1,0.0);
         comparison.nGramComparison(prject1,prject2);

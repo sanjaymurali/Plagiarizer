@@ -1,7 +1,11 @@
 package PlagiarismDetector;
 
 import core.PlagiarismDetection.Submission;
-import org.junit.*;
+import core.configuration.ApplicationConfig;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.mockito.InjectMocks;
@@ -14,13 +18,15 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.multipart.MultipartFile;
 import routes.Assignments;
 import routes.Upload;
+
+import java.io.File;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -39,23 +45,38 @@ public class UploadRouteTests {
     @Mock
     Submission submission;
 
+    @Mock
+    MultipartFile mpf;
+
     private MockMvc mockMvc;
 
-    MockMultipartFile firstFile, secondFile;
+    MockMultipartFile firstFile, secondFile, testFile;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
         mockMvc = MockMvcBuilders.standaloneSetup(upload).build();
-
         firstFile = new MockMultipartFile("files", "1.java", "text/plain", "1st Program here!".getBytes());
         secondFile = new MockMultipartFile("files", "2.java", "text/plain", "2nd Program here!".getBytes());
+        testFile = new MockMultipartFile("files", new byte[0]);
     }
 
     @AfterClass
     public static void cleanup() throws Exception {
-        MockMvc mockMvcInner = MockMvcBuilders.standaloneSetup(assignments).build();
-        mockMvcInner.perform(get("cleanse"));
+        String pathToUploadFolder = ApplicationConfig.pathToUploadFolder;
+        File currentDir = new File(pathToUploadFolder);
+        File[] files = currentDir.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    File[] insidefiles = file.listFiles();
+                    for (File insidefile : insidefiles) {
+                        insidefile.delete();
+                    }
+                }
+                file.delete();
+            }
+        }
     }
 
 

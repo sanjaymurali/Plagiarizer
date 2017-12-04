@@ -12,6 +12,7 @@ public class ApplicationConfig {
     public static final String local = "http://localhost:4200"; //Local URL
     public static final String herokuNoHttps = "http://plagiarizer.herokuapp.com"; // URL in heroku
     public static final String heroku = "https://plagiarizer.herokuapp.com"; // URL in heroku with https
+    public static final String testFrontEnd = "http://localhost:49152";
 
     public static final String pathToUploadFolder = "src/main/resources/uploads/"; // Path where the Java files get uploaded
 

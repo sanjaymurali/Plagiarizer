@@ -5,7 +5,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Created by hannam on 11/12/17.
+ * A test suite to test our Levenshtien Distance implementation.
  */
 public class testsForLD {
 
@@ -14,7 +14,7 @@ public class testsForLD {
         String one = "thissyName";
         String two = "thissyName";
 
-        assertEquals(0, LevensthienDistance.editDistance(one, two));
+        assertEquals(0, new LevensthienDistance(one, two).getEditDistance());
 
     }
 
@@ -23,7 +23,7 @@ public class testsForLD {
         String one = "";
         String two = "";
 
-        assertEquals(0, LevensthienDistance.editDistance(one, two));
+        assertEquals(0, new LevensthienDistance(one, two).getEditDistance());
 
     }
 
@@ -32,7 +32,7 @@ public class testsForLD {
         String two = "thissyName";
         String one = "";
 
-        assertEquals(10, LevensthienDistance.editDistance(one, two));
+        assertEquals(10, new LevensthienDistance(one, two).getEditDistance());
 
     }
 
@@ -41,7 +41,7 @@ public class testsForLD {
         String one = "thissyName";
         String two = "";
 
-        assertEquals(10, LevensthienDistance.editDistance(one, two));
+        assertEquals(10, new LevensthienDistance(one, two).getEditDistance());
 
     }
 
@@ -50,7 +50,7 @@ public class testsForLD {
         String one = "afive";
         String two = "zfour";
 
-        assertEquals(4, LevensthienDistance.editDistance(one, two));
+        assertEquals(4, new LevensthienDistance(one, two).getEditDistance());
 
 
     }
@@ -60,7 +60,7 @@ public class testsForLD {
         String one = "thissyName";
         String two = "whissysas";
 
-        assertEquals(4, LevensthienDistance.editDistance(one, two));
+        assertEquals(4, new LevensthienDistance(one, two).getEditDistance());
 
     }
 
@@ -69,7 +69,7 @@ public class testsForLD {
         String two = "thissyName";
         String one = "whissysas";
 
-        assertEquals(4, LevensthienDistance.editDistance(one, two));
+        assertEquals(4, new LevensthienDistance(one, two).getEditDistance());
 
     }
 
@@ -78,7 +78,7 @@ public class testsForLD {
         String one = "helloL";
         String two = "helloo";
 
-        assertEquals(1, LevensthienDistance.editDistance(one, two));
+        assertEquals(1, new LevensthienDistance(one, two).getEditDistance());
 
     }
 
@@ -87,7 +87,7 @@ public class testsForLD {
         String one = "Whello";
         String two = "Yhello";
 
-        assertEquals(1, LevensthienDistance.editDistance(one, two));
+        assertEquals(1, new LevensthienDistance(one, two).getEditDistance());
 
 
     }
@@ -97,7 +97,7 @@ public class testsForLD {
         String one = null;
         String two = "why";
 
-        assertEquals(3, LevensthienDistance.editDistance(one, two));
+        assertEquals(3, new LevensthienDistance(one, two).getEditDistance());
 
     }
 
@@ -106,7 +106,7 @@ public class testsForLD {
         String two = null;
         String one = "why";
 
-        assertEquals(3, LevensthienDistance.editDistance(one, two));
+        assertEquals(3, new LevensthienDistance(one, two).getEditDistance());
 
 
     }
@@ -116,7 +116,7 @@ public class testsForLD {
         String two = null;
         String one = null;
 
-        assertEquals(0, LevensthienDistance.editDistance(one, two));
+        assertEquals(0, new LevensthienDistance(one, two).getEditDistance());
 
     }
 

@@ -20,6 +20,7 @@ import java.util.List;
  */
 @RestController
 @CrossOrigin(origins = {
+        ApplicationConfig.testFrontEnd,
         ApplicationConfig.local,
         ApplicationConfig.herokuNoHttps,
         ApplicationConfig.heroku})
@@ -32,6 +33,7 @@ public class Upload {
     Factory factory = new Factory();
     Assignment a = factory.createAssignment();
     Writer writer = factory.Writer();
+    MultipartFile currentFile;
 
     int currentStudentID = 0; // This is to generate unique ID for each student
 
@@ -59,7 +61,7 @@ public class Upload {
             try {
                 while (filesIterator.hasNext()) {
 
-                    MultipartFile currentFile = filesIterator.next();
+                    currentFile = filesIterator.next();
                     // File Content and File name
                     byte[] x = currentFile.getBytes();
                     String fileName = currentFile.getOriginalFilename();

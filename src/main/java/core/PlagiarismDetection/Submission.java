@@ -137,8 +137,8 @@ public class Submission {
         for (int i = 0; i < this.fileNames.length; i++) {
             returns += this.fileNames[i] + ", ";
         }
-
-        returns += "} ";
+        returns = returns.substring(0, returns.length()-2); // remove trailing ", "
+        returns += "}";
         return returns;
 
     }

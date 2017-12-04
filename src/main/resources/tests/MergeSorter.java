@@ -24,7 +24,7 @@ public class MergeSorter<T extends Comparable<T>> implements Sorter {
         int j = mid + 1;
         int m = mid;
         int n = last;
-
+        x = 1;
         while (i < m && j <= n) {
             if (list[i].compareTo(list[j]) <= 0) {
                 temp[current] = list[i];

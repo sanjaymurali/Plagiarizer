@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import core.PlagiarismDetection.Assignment;
 import core.PlagiarismDetection.Submission;
 import core.PlagiarizerFactory.Factory;
+import core.configuration.ApplicationConfig;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
@@ -40,8 +41,6 @@ public class AssignmentRouteTests {
     @InjectMocks
     Assignments assignments;
 
-    static Assignments cleanseAssignments = new Assignments();
-
     @Mock
     Factory factory;
 
@@ -64,6 +63,7 @@ public class AssignmentRouteTests {
 
     @BeforeClass
     public static void setupSubmission() throws Exception {
+        ApplicationConfig ac = new ApplicationConfig();
         Factory factory = new Factory();
         Assignment assignment = factory.createAssignment();
         assignment.resetAssignment();

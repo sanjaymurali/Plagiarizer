@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @CrossOrigin(origins = {
+        ApplicationConfig.testFrontEnd,
         ApplicationConfig.local,
         ApplicationConfig.herokuNoHttps,
         ApplicationConfig.heroku})

@@ -8,11 +8,15 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+//TODO support declarations where variable is assigned.
+
 /**
  * Normalizer to get files ready for comparison.
  */
 public class Normalizer {
     private String normalized;
+    private static String replacementMethodName = "method";
+    private static String replacementVariableName = "variable";
 
     /**
      * Constructs a normalizer by parsing a file into a string.
@@ -27,16 +31,6 @@ public class Normalizer {
         } else {
             this.normalized = r.getFile(filePath);
         }
-        /*File file = new File(filePath);
-        Scanner scanner = new Scanner(file);
-        StringBuilder string = new StringBuilder((int) file.length());
-        while (scanner.hasNextLine()) {
-            string.append(scanner.nextLine());
-            string.append("\n");
-        }
-        this.normalized = string.toString();
-        scanner.close();*/
-
     }
 
     /**
@@ -52,20 +46,22 @@ public class Normalizer {
      * Runs normalization functions on string representation of file
      */
     public void runNormalization() {
-        System.out.println("1In here!");
         this.removeComments();
-        System.out.println("2In here!");
         this.removeExtraSpacesAndLines();
-        System.out.println("3In here!");
         this.removePackagesAndImports();
-        System.out.println("4In here!");
-        this.organize();
-        System.out.println("5In here!");
         this.replaceVariables();
-        System.out.println("6In here!");
         this.replaceMethods();
-        System.out.println("7In here!");
+        this.organize();
+        this.removeExtraSpacesAndLines();
         this.normalized = this.normalized.trim();
+    }
+
+    /**
+     * Runs only variable and method normalization on string representation of file
+     */
+    public void runPartialNormalization() {
+        this.replaceVariables();
+        this.replaceMethods();
     }
 
     /**
@@ -73,6 +69,7 @@ public class Normalizer {
      * 1. Header
      * 2. Variable Declarations
      * 3. Constructor
+     * 4. Private Methods
      * 4. Other Methods
      */
     private void organize() {
@@ -100,12 +97,30 @@ public class Normalizer {
         if (variableDeclarations.isEmpty()) {
             variableList = "";
         } else {
-            variableList = "\n";
+            variableList = "";
             for (int i = 0; i < variableDeclarations.size(); ++i) {
                 String dec = (String) variableDeclarations.get(i);
-                variableList = variableList.concat(dec).concat("\n");
+                this.normalized = this.normalized.replace(dec.trim(), ""); //NEW
+                variableList = variableList.concat(dec).concat(" ");
+
             }
-            this.normalized = this.normalized.replace(variableList, "").trim();
+
+        }
+
+        /* Find and remove PRIVATE CLASSES */
+        ArrayList privateClasses = this.findPrivateClasses();
+        String privateClassNames = null;
+        if (privateClasses.isEmpty()) {
+            privateClassNames = "";
+        } else {
+            privateClassNames = "";
+            for (int i = 0; i < privateClasses.size(); ++i) {
+                String pc = (String) privateClasses.get(i);
+                this.normalized = this.normalized.replace(pc.trim(), "");
+                privateClassNames = privateClassNames.concat(pc).concat(" ");
+
+            }
+
         }
 
         /* Reorganize string representation of file in standard order */
@@ -113,11 +128,10 @@ public class Normalizer {
         organized = organized.concat(header);
         organized = organized.concat(variableList);
         organized = organized.concat(constructor);
-        organized = organized.concat("\n" + this.getNormalized()); //TODO fix weirdness with spacing
+        organized = organized.concat(privateClassNames);
+        organized = organized.concat(this.getNormalized());// ^ add back if we want to keep new lines
 
-        // System.out.print("AFTER REMOVAL:\n" + this.normalized); //DEBUG
         this.normalized = organized;
-        // System.out.print("\n\nAFTER RE-ORGANIZATION:" + this.normalized); //DEBUG
     }
 
     private void removePackagesAndImports() {
@@ -129,35 +143,43 @@ public class Normalizer {
      **/
     private void removeComments() {
         this.normalized = this.normalized.replaceAll("(//.*\n)|(/\\*(.|[\\n\\r])*?\\*/)", "");
+
     }
 
     /**
      * Replaces 2+ white spaces or lines with one white space or line
      */
     private void removeExtraSpacesAndLines() {
-        //this.normalized = this.normalized.replaceAll("\\s{2,}", " ").trim(); // removes all spaces/new lines
+        this.normalized = this.normalized.replaceAll("\n", "");
         this.normalized = this.normalized.replaceAll("( ){2,}", " ");
-        this.normalized = this.normalized.replaceAll("(\n )", "\n");
-        this.normalized = this.normalized.replaceAll("(\n{2,})", "\n");
-        this.normalized = this.normalized.replaceAll("(; )", ";").trim();
+        this.normalized = this.normalized.replaceAll("(\\{ )", "{").trim();
     }
 
     /**
      * Isolates variable names from variable declarations, and puts them in an ArrayList
      *
      * @return array list with all variables in the program
-     * @throws IOException //TODO HANDLE EXCEPTION
      */
     private ArrayList<String> findVariables() {
         //TODO doesn't work yet with variables like ArrayList<string> b/c of characters
         ArrayList<String> variables = new ArrayList<String>();
         ArrayList<String> variableDeclarations = this.findVariableDeclarations();
-        for (int i = 0; i < variableDeclarations.size(); ++i) {
-            String declaration = variableDeclarations.get(i);
-            String variableName = declaration.replaceAll("(public|protected|private|static|)", "").trim();
-            variableName = variableName.replaceAll(("([a-zA-Z][\\w]*.\\s)"), "").trim();
-            variableName = variableName.replaceAll("(;)", "");
-            variables.add(variableName);
+        if (variableDeclarations.isEmpty()) {
+            return variables;
+        } else {
+            for (int i = 0; i < variableDeclarations.size(); ++i) {
+                String declaration = variableDeclarations.get(i);
+                String variableName = declaration.replaceAll("(public|protected|private|static|)", "").trim();
+                String remove = findEnclosed(variableName);
+                if (remove != null) {
+                    variableName = variableName.replace(remove, "").trim();
+                }
+                variableName = variableName.replaceAll(("([a-zA-Z][\\w]*.\\s)"), "").trim();
+                variableName = variableName.replaceAll("(;)", "");
+                if (!variableName.equals(replacementVariableName)) {
+                    variables.add(variableName);
+                }
+            }
         }
         return variables;
 
@@ -167,14 +189,29 @@ public class Normalizer {
      * Replaces all variables in the program with a standard name.
      */
     private void replaceVariables() {
-        String replacementVariableName = "variable";
         ArrayList<String> variables = this.findVariables();
-        for (int i = 0; i < variables.size(); ++i) {
-            String variableName = variables.get(i);
-            this.normalized = this.normalized.replaceAll(variableName, replacementVariableName);
-
+        if (!variables.isEmpty()) {
+            this.replace(replacementVariableName, variables);
         }
+    }
 
+    /**
+     * Replaces all names in the list with the provided new name
+     *
+     * @param newName new name to change all names to
+     * @param list    list requiring name changes
+     */
+    private void replace(String newName, ArrayList<String> list) {
+        if (list.isEmpty()) {
+            return;
+        } else {
+            for (int i = 0; i < list.size(); ++i) {
+                String singleName = list.get(i);
+                this.normalized = this.normalized.replaceAll(singleName, newName);
+
+
+            }
+        }
     }
 
     /**
@@ -185,32 +222,83 @@ public class Normalizer {
     private String findHeader() {
         String header = null;
         String pattern = "\\{";
-        Pattern p = Pattern.compile(pattern);
-        Matcher m = p.matcher(this.getNormalized());
+        Matcher m = Pattern.compile(pattern).matcher(this.getNormalized());
         if (m.find()) {
             header = this.normalized.substring(0, m.end());
         }
         return header;
     }
 
+    private ArrayList findPrivateClasses() {
+        ArrayList<String> privateClasses = new ArrayList<String>();
+        String pc = null;
+        String pattern = "(private class )[^{]*(\\{)";
+        Matcher m = Pattern.compile(pattern).matcher(this.getNormalized());
+        while (m.find()) {
+            int i = m.end();
+            int openBraces = 1;
+            int closedBraces = 0;
+            do {
+                Character c = this.getNormalized().charAt(i);
+                if (c == '{') {
+                    openBraces++;
+
+                } else if (c == '}') {
+                    closedBraces++;
+
+                }
+                ++i;
+            } while (openBraces == 0 || openBraces != closedBraces);
+            pc = this.normalized.substring(m.start(), i);
+            privateClasses.add(pc);
+        }
+        return privateClasses;
+    }
+
+
     /**
      * Finds the variable declarations for the class.
      *
      * @return variable declarations for the class
      */
-    private ArrayList<String> findVariableDeclarations() {
-        String declaration;
+    private ArrayList<String> findVariableDeclarations() { //TODO STILL DOESN'T WORK FOR [] VARIABLES
         ArrayList declarations = new ArrayList<String>();
-        //TODO doesn't work yet with variables like ArrayList<string> b/c of characters
-        String pattern = "(public|protected|private|static|_)+(\\s)+([a-zA-Z][\\w]*\\s)+([a-zA-Z_$][\\w$]*)+(;)";
-        Pattern p = Pattern.compile(pattern);
-        Matcher m = p.matcher(this.getNormalized());
+        String pattern = "(public|protected|private|static)(\\s)(([a-zA-Z][\\w]*)(<[a-zA-Z][\\w]*>)|([a-zA-Z][\\w]*)([a-zA-Z][\\w]*))( [a-zA-Z][\\w]*)(;)";
+        Matcher m = Pattern.compile(pattern).matcher(this.getNormalized());
         while (m.find()) {
-            declaration = this.normalized.substring(m.start(), m.end());
-            declarations.add(declaration);
+            declarations.add(m.group());
         }
         return declarations;
 
+    }
+
+    /**
+     * Finds the substring within provided string enclosed in '<' '>' symbols
+     *
+     * @param s String to check within
+     * @return substring enclosed in '<' '>' symbols (including the symbols)
+     */
+    private static String findEnclosed(String s) {
+        String result = null;
+        int start = s.indexOf("<");
+        if (start > -1) {
+            int i = start;
+            int open = 0;
+            int closed = 0;
+            do {
+                Character c = s.charAt(i);
+                if (c == '<') {
+                    open++;
+
+                } else if (c == '>') {
+                    closed++;
+
+                }
+                ++i;
+            } while (open == 0 || open != closed);
+            result = s.substring(start, i);
+        }
+        return result;
     }
 
     /**
@@ -218,20 +306,22 @@ public class Normalizer {
      *
      * @return name of the class
      */
-    private String findClassName() {  //TODO make this tolerate less standard class names (i.e. extends... implements...) through regex (started w/ commented out lines)
+    private String findClassName() {
         String className = null;
         String header = this.findHeader();
-        //String pattern = "([a-zA-Z_$][\\w$]*)";
-        //Pattern p = Pattern.compile(pattern);
-        //Matcher m = p.matcher(header);
         if (header != null) {
-            className = header.replace("(public|protected|private|static|)", "").trim();
+            className = header;
+            className = className.replaceAll("(public|protected|private|static)", "").trim();
             className = className.replace("class", "").trim();
             className = className.replace("{", "").trim();
-            //className = className.substring(0, m.end());
+            className = className.replaceAll("implements *([a-zA-Z][\\w]*)", "");
+            className = className.replaceAll("extends *([a-zA-Z][\\w]*)", "");
+            String remove = findEnclosed(className);
+            if (remove != null) {
+                className = className.replace(remove, "").trim();
+            }
         }
         return className;
-
     }
 
     /**
@@ -244,12 +334,10 @@ public class Normalizer {
         String className = null;
         className = this.findClassName();
         String pattern = null;
-        Pattern p = null;
         Matcher m = null;
         if (className != null) {
-            pattern = "(public)+(\\s)" + className; //TODO - may be able to replace do while loop by using regex to find up to last } ?
-            p = Pattern.compile(pattern);
-            m = p.matcher(this.getNormalized());
+            pattern = "(public)+(\\s)" + className;
+            m = Pattern.compile(pattern).matcher(this.getNormalized());
 
 
             if (m.find()) {
@@ -282,16 +370,16 @@ public class Normalizer {
     public ArrayList<String> findMethods() {
         String methodDeclaration;
         ArrayList methods = new ArrayList<String>();
-        String pattern = "(public|protected|private|static|public static|private static|protected static_)" +
-                "+(\\s)+([a-zA-Z][\\w]*\\s)+([a-zA-Z_$][\\w$]*)+(\\()";
-        Pattern p = Pattern.compile(pattern);
-        Matcher m = p.matcher(this.getNormalized());
+        String pattern = "(public|protected|private|static|public static|private static|protected static)(\\s)+([a-zA-Z][\\w]*\\s)+([a-zA-Z_$][\\w$]*)(\\()";
+        Matcher m = Pattern.compile(pattern).matcher(this.getNormalized());
         while (m.find()) {
             methodDeclaration = this.normalized.substring(m.start(), m.end() - 1);
             String methodName = methodDeclaration.replace("(public|protected|private|static|public static|" +
                     "private static|protected static_)", "").trim();
             methodName = methodName.replaceAll(("([a-zA-Z][\\w]*.\\s)"), "").trim();
-            methods.add(methodName);
+            if (!methodName.equals(replacementMethodName) && !methodName.equals(replacementVariableName)){
+                methods.add(methodName);
+            }
         }
 
         return methods;
@@ -301,14 +389,8 @@ public class Normalizer {
      * Replaces all methods in the program with a standard name.
      */
     public void replaceMethods() {
-        String replacementVariableName = "method";
         ArrayList<String> methods = this.findMethods();
-        for (int i = 0; i < methods.size(); ++i) {
-            String methodName = methods.get(i);
-            this.normalized = this.normalized.replaceAll(methodName, replacementVariableName);
-
-        }
-
+        this.replace(replacementMethodName, methods);
     }
 
 }

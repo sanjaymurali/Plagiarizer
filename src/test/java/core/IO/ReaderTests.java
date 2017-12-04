@@ -23,10 +23,9 @@ public class ReaderTests {
     }
 
 
-    // A path that doesnt exists
+    // A path that doesn't exists
     @Test
     public void testNoFile() throws IOException {
-
         String s = reader.getFile("Empty");
 
         assertNull(s);

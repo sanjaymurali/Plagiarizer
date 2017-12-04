@@ -12,7 +12,7 @@ import hw4.*;
  */
 public class MergeSorter2<T extends Comparable<T>> implements Sorter {
 
-    private int x;
+    private int asc;
 
     @Override
     public void sort(Comparable[] list) {
@@ -26,7 +26,7 @@ public class MergeSorter2<T extends Comparable<T>> implements Sorter {
         int j = mid + 1;
         int m = mid;
         int n = last;
-
+        asc = 1;
         while (i < m && j <= n) {
             if (list[i].compareTo(list[j]) <= 0) {
                 temp[current] = list[i];
