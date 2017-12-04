@@ -119,7 +119,6 @@ public class Writer {
         String pathToFolder = createFolderForStudentSubmission(studentID);
 
         File currentFile = new File(pathToFolder + File.separator + studentID + "-" + name);
-        System.out.println("Sanjay " + pathToFolder + File.separator + studentID + "-" + name);
         if (!currentFile.exists()) {
             currentFile.createNewFile();
         }

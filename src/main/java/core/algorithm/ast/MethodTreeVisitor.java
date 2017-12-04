@@ -10,65 +10,64 @@ import java.util.List;
 /**
  * a Vistor class for methods
  */
-public  class MethodTreeVisitor extends VoidVisitorAdapter {
+public class MethodTreeVisitor extends VoidVisitorAdapter {
 
 
     private List<MethodNode> tree = new ArrayList<MethodNode>();
 
-    private List<String> getFieldName(ClassOrInterfaceDeclaration c){
+    private List<String> getFieldName(ClassOrInterfaceDeclaration c) {
 
         List<String> var = new ArrayList<String>();
 
         FeildVisitor fVisitor = new FeildVisitor();
-        fVisitor.visit(c,null);
+        fVisitor.visit(c, null);
         return fVisitor.getGlobalVar();
     }
 
     /**
      * Build AST for all method in each class
-     * @param  n for the current method  to visit
-     * @return
      *
+     * @param n for the current method  to visit
+     * @return
      */
     @Override
     public void visit(MethodDeclaration n, Object arg) {
 
         List<String> var = new ArrayList<String>();
-        var.addAll(getFieldName((ClassOrInterfaceDeclaration)arg));
+        var.addAll(getFieldName((ClassOrInterfaceDeclaration) arg));
 
 
         String name = n.getDeclarationAsString();
-        name=name.replace(n.getNameAsString(),"m");
+        name = name.replace(n.getNameAsString(), "m");
 
-        MethodNode current = new MethodNode(name,n.getType().asString());
+        MethodNode current = new MethodNode(name, n.getType().asString());
 
 
         ParameterNode parameter;
 
-        if(n.getParameters().size()>0)
-            for(int i=0;i<n.getParameters().size();i++){
-                parameter = new ParameterNode(n.getParameter(i).getName().asString(),n.getParameter(i).getType().toString());
+        if (n.getParameters().size() > 0)
+            for (int i = 0; i < n.getParameters().size(); i++) {
+                parameter = new ParameterNode(n.getParameter(i).getName().asString(), n.getParameter(i).getType().toString());
                 current.addParameter(parameter);
                 var.add(n.getParameter(i).getName().asString());
             }
-        else{
-            parameter = new ParameterNode("","");
+        else {
+            parameter = new ParameterNode("", "");
             current.addParameter(parameter);
         }
 
-        if (n.getBody().get().getStatements().size()>0)
-            for(int i=0;i<n.getBody().get().getStatements().size();i++){
+        if (n.getBody().get().getStatements().size() > 0)
+            for (int i = 0; i < n.getBody().get().getStatements().size(); i++) {
                 String body = n.getBody().get().getStatement(i).toString();
-                if (n.getBody().get().getStatement(i).isExpressionStmt()){
-                    if(body.contains("Map")){
+                if (n.getBody().get().getStatement(i).isExpressionStmt()) {
+                    if (body.contains("Map")) {
                         String[] temp = body.split(">");
-                        temp[1]=temp[1].split(" ")[1];
+                        temp[1] = temp[1].split(" ")[1];
 
                         var.add(temp[1]);
                         body = body.replaceAll(temp[1], "v");
 
-                    }
-                    else {
+                    } else {
                         String[] temp = body.split(" ");
                         if (temp.length >= 2)
                             if (!isConSpecChar(temp[1])) {
@@ -76,17 +75,16 @@ public  class MethodTreeVisitor extends VoidVisitorAdapter {
                                 body = body.replaceAll(temp[1], "v");
                             }
                     }
-                }
-                else{
-                    for(int j =0;j<var.size();j++){
-                        body= body.replaceAll(var.get(j),"v");
+                } else {
+                    for (int j = 0; j < var.size(); j++) {
+                        body = body.replaceAll(var.get(j), "v");
                     }
                 }
 
                 current.addBody(body);
 
             }
-        else{
+        else {
             current.addBody("");
         }
 
@@ -96,21 +94,21 @@ public  class MethodTreeVisitor extends VoidVisitorAdapter {
 
     /**
      * Get the AST for all method
-     * @return the method AST in each class
      *
+     * @return the method AST in each class
      */
-    public List<MethodNode> getTree(){
-        return  tree;
+    public List<MethodNode> getTree() {
+        return tree;
     }
 
     /**
      * Check if the stirng includ some special Char
-     * @return ture if  include
      *
+     * @return ture if  include
      */
     private boolean isConSpecChar(String string) {
 
-        if(string.replaceAll("[\u4e00-\u9fa5]*[a-z]*[A-Z]*\\d*-*_*\\s*", "").length()==0){
+        if (string.replaceAll("[\u4e00-\u9fa5]*[a-z]*[A-Z]*\\d*-*_*\\s*", "").length() == 0) {
 
             return false;
         }

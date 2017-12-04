@@ -20,15 +20,14 @@ public class Compare {
     ObjectMapper om = new ObjectMapper();
 
     @RequestMapping(value = "/compare", method = RequestMethod.POST)
-    public ResponseEntity<?> assignments(@RequestBody CompareStudents students){
-        System.out.println("Its hit!");
+    public ResponseEntity<?> assignments(@RequestBody CompareStudents students) {
         // students contains the two students selected for comparing and their corresponding files
         Students[] selectedStudents = students.getStudents();
 
-        if(selectedStudents == null) {
+        if (selectedStudents == null) {
             return ApplicationConfig.ErrorResponse();
         } else {
-            if(selectedStudents.length == 2) { // Allow exactly only two students to be compared
+            if (selectedStudents.length == 2) { // Allow exactly only two students to be compared
 
                 String[] project1 = selectedStudents[0].getFilePaths();
                 String[] project2 = selectedStudents[1].getFilePaths();
@@ -39,7 +38,7 @@ public class Compare {
                     String responseJSON = "{\"success\": true, \"result\": \"" + resultString + "\"}";
 
                     return ResponseEntity.ok(responseJSON);
-                } catch(Exception e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                     return ApplicationConfig.ErrorResponse();
                 }
@@ -56,18 +55,18 @@ public class Compare {
 
         // AST Comparison
         NGramComparison astComparison = new NGramComparison();
-        astComparison.nGramComparison(project1,project2);
+        astComparison.nGramComparison(project1, project2);
         // LCS and LD Comparison
         CodeComparisonScores textDiffScores = new CodeComparisonScores(project1, project2);
 
         // Retrieve scores via getters and store them in array for easier output use as a JSON object.
-        arrayOfResults[0] = astComparison.getResult()*100;
+        arrayOfResults[0] = astComparison.getResult() * 100;
         arrayOfResults[1] = textDiffScores.getScoreForLCS();
         arrayOfResults[2] = textDiffScores.getScoreForLD();
 
         double textDiffAvg = textDiffScores.getOverallTextDiffScore();
 
-        arrayOfResults[3] = (textDiffAvg + arrayOfResults[0])/2;
+        arrayOfResults[3] = (textDiffAvg + arrayOfResults[0]) / 2;
 
 
         return arrayOfResults;

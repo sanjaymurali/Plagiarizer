@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * a Vistor class for global varible
  */
-public  class FeildVisitor extends VoidVisitorAdapter {
+public class FeildVisitor extends VoidVisitorAdapter {
     private List<String> feilds = new ArrayList<String>();
     private List<String> globalVar = new ArrayList<String>();
 
@@ -23,7 +23,7 @@ public  class FeildVisitor extends VoidVisitorAdapter {
     public void visit(FieldDeclaration f, Object arg) {
 
         globalVar.add(f.getVariable(0).getNameAsString());
-        feilds.add(f.toString().replace(f.getVariable(0).getNameAsString(),"v"));
+        feilds.add(f.toString().replace(f.getVariable(0).getNameAsString(), "v"));
     }
 
     /**

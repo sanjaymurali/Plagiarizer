@@ -3,7 +3,7 @@ package core.algorithm.lcs;
 /**
  * A class representing the Levenshtien Distance algorithm for computing the amount
  * of operations needed to convert one string into another.
- *
+ * <p>
  * Of note, the prior implementation simply held a static method, but was changed to this for
  * better memory management. In addition, we could add related methods to this class which could
  * show what was edited, etc, that otherwise would not have made sense with just the use of a
@@ -17,6 +17,7 @@ public class LevensthienDistance {
     /**
      * The constructor which modifies the private field, editDistance, which
      * tracks the amount of operations it would take to edit one distance into another.
+     *
      * @param one
      * @param two
      */
@@ -67,6 +68,7 @@ public class LevensthienDistance {
     /**
      * Getter function to return the amount of operations it takes to manipulate
      * one String into another.
+     *
      * @return the amount of edits represented by an integer.
      */
     public int getEditDistance() {

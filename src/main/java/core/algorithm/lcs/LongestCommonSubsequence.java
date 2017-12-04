@@ -20,8 +20,7 @@ public class LongestCommonSubsequence {
         if (one == null || two == null) {
             lengthOfLCS = 0;
             return;
-        }
-        else {
+        } else {
             int array[][] = new int[one.length() + 1][two.length() + 1];
             for (int i = 0; i <= one.length(); i++) {
                 array[i][0] = 0;
@@ -52,6 +51,7 @@ public class LongestCommonSubsequence {
 
     /**
      * A getter function returning the length of the LCS.
+     *
      * @return the length of the LCS, represented by an integer.
      */
     public int getLengthOfLCS() {
