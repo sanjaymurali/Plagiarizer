@@ -105,7 +105,7 @@ public class NGramComparison {
         }
 
 
-        for (int m = 0; m < t1.size(); m++) {
+        for (int m = 0; m < t2.size(); m++) {
             if (t2.get(m).classes != null)
                 for (int i = 0; i < t2.get(m).classes.size(); i++) {
 
