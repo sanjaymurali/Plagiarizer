@@ -24,7 +24,7 @@ public class ASTTests {
     }
 
     @Test
-    public void test0() throws IOException {
+    public void test0NgramComparison() throws IOException {
         String[] A = new String[1];
         String[] B = new String[1];
 
@@ -34,7 +34,6 @@ public class ASTTests {
 
         NGramComparison c = new NGramComparison();
         c.nGramComparison(A,B);
-        System.out.println(c.getResult());
         Assert.assertEquals(c.getResult(),0.7,0.1);
     }
 
