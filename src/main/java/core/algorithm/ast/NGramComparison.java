@@ -67,7 +67,7 @@ public class NGramComparison {
         if (t1.imports != null)
             target1.addAll(transfer(t1.imports));
         if (t2.imports != null)
-            target1.addAll(transfer(t2.imports));
+            target2.addAll(transfer(t2.imports));
 
 
         if (target1.isEmpty() && target2.isEmpty()) {
@@ -146,7 +146,9 @@ public class NGramComparison {
                     count++;
                     target2.remove(target1.get(i));
                 }
+
             }
+
             result = count / target1.size();
         } else {
 
@@ -157,6 +159,7 @@ public class NGramComparison {
                     target1.remove(target2.get(i));
                 }
             }
+
             result = count / target2.size();
         }
 
@@ -176,42 +179,41 @@ public class NGramComparison {
 
             if (c.getName().charAt(i) != ' ')
                 data.add(c.getName().charAt(i));
-
         }
+        result.addAll(makeNString(data));
 
         for (int i = 0; i < c.getFeilds().size(); i++) {
+            data.clear();
             for (int j = 0; j < c.getFeilds().get(i).length(); j++) {
                 if (c.getFeilds().get(i).charAt(j) != ' ') {
                     data.add(c.getFeilds().get(i).charAt(j));
                 }
             }
+            result.addAll(makeNString(data));
         }
 
         for (int i = 0; i < c.getMethods().size(); i++) {
+            result.addAll(makeNString(data));
             for (int j = 0; j < c.getMethods().get(i).getName().length(); j++) {
+
                 if (c.getMethods().get(i).getName().charAt(j) != ' ') {
                     data.add(c.getMethods().get(i).getName().charAt(j));
 
                 }
             }
+            result.addAll(makeNString(data));
             for (int j = 0; j < c.getMethods().get(i).getBody().size(); j++) {
+                data.clear();
                 for (int k = 0; k < c.getMethods().get(i).getBody().get(j).length(); k++) {
                     if (c.getMethods().get(i).getBody().get(j).charAt(k) != ' ') {
                         data.add(c.getMethods().get(i).getBody().get(j).charAt(k));
                     }
                 }
+                result.addAll(makeNString(data));
             }
         }
 
 
-        if (data.size() < N) {
-            for (int i = 0; i < data.size(); i++) {
-                result.add(data.get(i) + "");
-            }
-        } else {
-
-            result.addAll(makeNString(data));
-        }
 
         return result;
     }
@@ -226,20 +228,14 @@ public class NGramComparison {
         List<String> result = new ArrayList<String>();
 
         for (int i = 0; i < imports.getImports().size(); i++) {
+            data.clear();
             for (int j = 0; j < imports.getImports().get(i).length(); j++) {
                 if (imports.getImports().get(i).charAt(j) != ' ')
                     data.add(imports.getImports().get(i).charAt(j));
             }
-        }
-
-        if (data.size() < N) {
-            for (int i = 0; i < data.size(); i++) {
-                result.add(data.get(i) + "");
-            }
-        } else {
-
             result.addAll(makeNString(data));
         }
+
 
         return result;
 
@@ -259,14 +255,9 @@ public class NGramComparison {
                 data.add(p.getName().charAt(i));
         }
 
-        if (data.size() < N) {
-            for (int i = 0; i < data.size(); i++) {
-                result.add(data.get(i) + "");
-            }
-        } else {
 
-            result.addAll(makeNString(data));
-        }
+        result.addAll(makeNString(data));
+
 
         return result;
     }
@@ -279,14 +270,22 @@ public class NGramComparison {
      */
     private List<String> makeNString(List<Character> data) {
         List<String> result = new ArrayList<String>();
-        for (int i = 0; i <= (data.size() - N); i++) {
-            String temp = "";
-            for (int j = 0; j < N; j++) {
-                temp = temp + data.get(i + j);
-            }
-            result.add(temp);
+        if (data.size()==0){
+            return  result;
         }
-
+        if (data.size() < N) {
+            for (int i = 0; i < data.size(); i++) {
+                result.add(data.get(i) + "");
+            }
+        } else {
+            for (int i = 0; i <= (data.size() - N); i++) {
+                String temp = "";
+                for (int j = 0; j < N; j++) {
+                    temp = temp + data.get(i + j);
+                }
+                result.add(temp);
+            }
+        }
         return result;
     }
 
