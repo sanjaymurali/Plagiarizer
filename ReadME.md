@@ -1,3 +1,5 @@
+# Plagiarizer
+
 **Welcome to Plagiarizer!**
 
 This is a Spring MVC application. Its the backend of the Plagiarizer that we are building.
